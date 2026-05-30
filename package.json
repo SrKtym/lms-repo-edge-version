@@ -1,37 +1,37 @@
 {
-  "name": "lms-repo-edge-version",
-  "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
-  "type": "module",
-  "scripts": {
-    "dev": "turbo dev",
-    "build": "turbo build",
-    "check-types": "turbo check-types",
-    "dev:web": "turbo -F web dev",
-    "dev:server": "turbo -F server dev",
-    "db:push": "turbo -F @lms-repo-edge-version/db db:push",
-    "db:studio": "turbo -F @lms-repo-edge-version/db db:studio",
-    "db:generate": "turbo -F @lms-repo-edge-version/db db:generate",
-    "db:migrate": "turbo -F @lms-repo-edge-version/db db:migrate",
-    "deploy": "turbo -F @lms-repo-edge-version/infra deploy",
-    "destroy": "turbo -F @lms-repo-edge-version/infra destroy",
-    "check": "biome check --write ."
-  },
-  "dependencies": {
-    "@lms-repo-edge-version/env": "workspace:*",
-    "dotenv": "catalog:",
-    "zod": "catalog:"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^2.2.0",
-    "@cloudflare/workers-types": "catalog:",
-    "@lms-repo-edge-version/config": "workspace:*",
-    "@types/node": "catalog:",
-    "turbo": "^2.8.12",
-    "typescript": "catalog:"
-  },
-  "packageManager": "pnpm@10.32.1"
+	"name": "lms-repo-edge-version",
+	"private": true,
+	"workspaces": [
+		"apps/*",
+		"packages/*"
+	],
+	"type": "module",
+	"scripts": {
+		"dev": "turbo dev",
+		"build": "turbo build",
+		"check-types": "turbo check-types",
+		"dev:web": "turbo -F web dev",
+		"dev:server": "turbo -F server dev",
+		"db:push": "turbo -F @lms-repo-edge-version/db db:push",
+		"db:studio": "turbo -F @lms-repo-edge-version/db db:studio",
+		"db:generate": "turbo -F @lms-repo-edge-version/db db:generate",
+		"db:migrate": "turbo -F @lms-repo-edge-version/db db:migrate",
+		"deploy": "turbo -F @lms-repo-edge-version/infra deploy",
+		"destroy": "turbo -F @lms-repo-edge-version/infra destroy",
+		"check": "biome check --write ."
+	},
+	"dependencies": {
+		"@lms-repo-edge-version/env": "workspace:*",
+		"dotenv": "catalog:",
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.2.0",
+		"@cloudflare/workers-types": "catalog:",
+		"@lms-repo-edge-version/config": "workspace:*",
+		"@types/node": "catalog:",
+		"turbo": "^2.8.12",
+		"typescript": "catalog:"
+	},
+	"packageManager": "pnpm@10.32.1"
 }

@@ -1,24 +1,24 @@
 {
-  "name": "@lms-repo-edge-version/auth",
-  "type": "module",
-  "exports": {
-    ".": {
-      "default": "./src/index.ts"
-    },
-    "./*": {
-      "default": "./src/*.ts"
-    }
-  },
-  "scripts": {},
-  "dependencies": {
-    "@lms-repo-edge-version/db": "workspace:*",
-    "@lms-repo-edge-version/env": "workspace:*",
-    "better-auth": "catalog:",
-    "dotenv": "catalog:",
-    "zod": "catalog:"
-  },
-  "devDependencies": {
-    "@lms-repo-edge-version/config": "workspace:*",
-    "typescript": "catalog:"
-  }
+	"name": "@lms-repo-edge-version/auth",
+	"type": "module",
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
+	"scripts": {},
+	"dependencies": {
+		"@lms-repo-edge-version/db": "workspace:*",
+		"@lms-repo-edge-version/env": "workspace:*",
+		"better-auth": "catalog:",
+		"dotenv": "catalog:",
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@lms-repo-edge-version/config": "workspace:*",
+		"typescript": "catalog:"
+	}
 }
