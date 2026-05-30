@@ -1,0 +1,3 @@
+{
+  "extends": "@lms-repo-edge-version/config/tsconfig.base.json"
+}
