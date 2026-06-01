@@ -15,7 +15,7 @@ export async function fetchStudentData(userId: string) {
 			department: departments.name,
 			faculty: faculties.name,
 			grade: students.grade,
-			requiredCredit: students.requiredCredits,
+			requiredCredit: departments.requiredCredits,
 		})
 		.from(students)
 		.innerJoin(departments, eq(students.departmentId, departments.id))

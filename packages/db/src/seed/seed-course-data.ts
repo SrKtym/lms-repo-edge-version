@@ -21,6 +21,20 @@ export async function seedCourseData() {
 		});
 	});
 
+	// 学科ごとの必修単位数を取得する関数
+	function getRequiredCredits(departmentName: string): number {
+		switch (departmentName) {
+			case "医学科":
+				return 200;
+			case "看護学科":
+				return 140;
+			case "保健学科":
+				return 140;
+			default:
+				return 130;
+		}
+	}
+
 	await createDb().transaction(async (tx) => {
 		try {
 			// 学部の登録
@@ -37,6 +51,7 @@ export async function seedCourseData() {
 			const departmentNames = Object.values(coursesMaster).flatMap(Object.keys);
 			const departmentValues = departmentNames.map((name) => {
 				let facultyId: string | undefined;
+				const requiredCredits = getRequiredCredits(name);
 				facultyNames.forEach((facultyName) => {
 					if (name in coursesMaster[facultyName]) {
 						facultyId = facultyMapping.get(facultyName);
@@ -48,6 +63,7 @@ export async function seedCourseData() {
 				return {
 					name,
 					facultyId,
+					requiredCredits,
 				};
 			});
 

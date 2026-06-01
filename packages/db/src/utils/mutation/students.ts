@@ -20,29 +20,12 @@ export async function registerStudentData(
 				return { message: "学科が見つかりません。", status: 404 };
 			}
 
-			function getRequiredCredits(departmentName: string): number {
-				switch (departmentName) {
-					case "医学科":
-						return 200;
-					case "看護学科":
-						return 140;
-					case "保健学科":
-						return 140;
-					default:
-						return 130;
-				}
-			}
-
-			const requiredCredits = getRequiredCredits(departmentName);
-
 			await tx
 				.insert(students)
 				.values({
 					id: userId,
 					departmentId: departmentId[0].id,
-					departmentName: departmentName,
 					grade,
-					requiredCredits,
 				})
 				.onConflictDoNothing();
 		});
