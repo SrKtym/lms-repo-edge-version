@@ -1,0 +1,20 @@
+{
+	"name": "@lms-repo-edge-version/api",
+	"type": "module",
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		}
+	},
+	"scripts": {},
+	"dependencies": {
+		"@hono/zod-validator": "^0.7.6",
+		"@lms-repo-edge-version/auth": "workspace:*",
+		"@lms-repo-edge-version/db": "workspace:*",
+		"@lms-repo-edge-version/emails": "workspace:",
+		"hono": "catalog:"
+	},
+	"devDependencies": {
+		"typescript": "catalog:"
+	}
+}

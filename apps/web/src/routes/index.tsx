@@ -1,34 +1,31 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { ArrowRight } from "@lms-repo-edge-version/ui/assets/icons/arrow-right";
+import { DefaultButton } from "@lms-repo-edge-version/ui/components/button";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { DeviceShowcase } from "@/components/landing/device-showcase";
+import { FeaturesSection } from "@/components/landing/features-section";
+import { Footer } from "@/components/landing/footer";
+import { HeroSection } from "@/components/landing/hero-section";
+import { VideoTutorial } from "@/components/landing/video-tutorial";
 
 export const Route = createFileRoute("/")({
 	component: HomeComponent,
 });
 
-const TITLE_TEXT = `
- ██████╗ ███████╗████████╗████████╗███████╗██████╗
- ██╔══██╗██╔════╝╚══██╔══╝╚══██╔══╝██╔════╝██╔══██╗
- ██████╔╝█████╗     ██║      ██║   █████╗  ██████╔╝
- ██╔══██╗██╔══╝     ██║      ██║   ██╔══╝  ██╔══██╗
- ██████╔╝███████╗   ██║      ██║   ███████╗██║  ██║
- ╚═════╝ ╚══════╝   ╚═╝      ╚═╝   ╚══════╝╚═╝  ╚═╝
-
- ████████╗    ███████╗████████╗ █████╗  ██████╗██╗  ██╗
- ╚══██╔══╝    ██╔════╝╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝
-    ██║       ███████╗   ██║   ███████║██║     █████╔╝
-    ██║       ╚════██║   ██║   ██╔══██║██║     ██╔═██╗
-    ██║       ███████║   ██║   ██║  ██║╚██████╗██║  ██╗
-    ╚═╝       ╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
- `;
-
 function HomeComponent() {
 	return (
-		<div className="container mx-auto max-w-3xl px-4 py-2">
-			<pre className="overflow-x-auto font-mono text-sm">{TITLE_TEXT}</pre>
-			<div className="grid gap-6">
-				<section className="rounded-lg border p-4">
-					<h2 className="mb-2 font-medium">API Status</h2>
-				</section>
-			</div>
+		<div className="flex min-h-screen flex-col">
+			<HeroSection>
+				<Link to="/sign-in">
+					<DefaultButton size="lg" className="flex items-center gap-2">
+						はじめる
+						<ArrowRight />
+					</DefaultButton>
+				</Link>
+			</HeroSection>
+			<FeaturesSection />
+			<DeviceShowcase />
+			<VideoTutorial />
+			<Footer />
 		</div>
 	);
 }

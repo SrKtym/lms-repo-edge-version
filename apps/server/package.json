@@ -8,12 +8,15 @@
 		"compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server"
 	},
 	"dependencies": {
+		"@arcjet/node": "^1.4.0",
+		"@arcjet/inspect": "^1.4.0",
+		"@arcjet/ip": "^1.4.0",
+		"@lms-repo-edge-version/api": "workspace:*",
 		"@lms-repo-edge-version/auth": "workspace:*",
 		"@lms-repo-edge-version/db": "workspace:*",
 		"@lms-repo-edge-version/env": "workspace:*",
-		"better-auth": "catalog:",
 		"dotenv": "catalog:",
-		"hono": "^4.8.2",
+		"hono": "catalog:",
 		"zod": "catalog:"
 	},
 	"devDependencies": {

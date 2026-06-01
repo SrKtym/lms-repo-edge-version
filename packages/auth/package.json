@@ -2,18 +2,25 @@
 	"name": "@lms-repo-edge-version/auth",
 	"type": "module",
 	"exports": {
-		".": {
-			"default": "./src/index.ts"
+		"./server": {
+			"default": "./src/auth.ts"
 		},
-		"./*": {
-			"default": "./src/*.ts"
+		"./web": {
+			"default": "./src/auth-client.ts"
+		},
+		"./utils/*": {
+			"default": "./src/utils/*.ts"
 		}
 	},
 	"scripts": {},
 	"dependencies": {
+		"@lms-repo-edge-version/emails": "workspace:*",
 		"@lms-repo-edge-version/db": "workspace:*",
 		"@lms-repo-edge-version/env": "workspace:*",
-		"better-auth": "catalog:",
+		"hono": "catalog:",
+		"better-auth": "^1.6.12",
+		"@better-auth/drizzle-adapter": "^1.6.12",
+		"@better-auth/passkey": "^1.6.12",
 		"dotenv": "catalog:",
 		"zod": "catalog:"
 	},

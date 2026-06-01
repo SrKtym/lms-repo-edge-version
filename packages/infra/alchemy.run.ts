@@ -1,18 +1,24 @@
 import alchemy from "alchemy";
-import { Vite, Worker } from "alchemy/cloudflare";
+import { R2Bucket, Vite, Worker } from "alchemy/cloudflare";
 import { config } from "dotenv";
 
+// 開発環境の場合のみローカルの.envファイルを読み込む
+// 本番環境ではAlchemyの環境変数管理を使用
+const env = process.env.NODE_ENV || "development";
 config({ path: "./.env" });
-config({ path: "../../apps/web/.env" });
-config({ path: "../../apps/server/.env" });
+config({ path: `../../apps/web/.env.${env}`, override: true });
+config({ path: `../../apps/server/.env.${env}`, override: true });
 
 const app = await alchemy("lms-repo-edge-version");
+
+export const storageBucket = await R2Bucket("storage");
 
 export const web = await Vite("web", {
 	cwd: "../../apps/web",
 	assets: "dist",
 	bindings: {
 		VITE_SERVER_URL: alchemy.env.VITE_SERVER_URL!,
+		VITE_CLIENT_URL: alchemy.env.VITE_CLIENT_URL!,
 	},
 });
 
@@ -25,6 +31,15 @@ export const server = await Worker("server", {
 		CORS_ORIGIN: alchemy.env.CORS_ORIGIN!,
 		BETTER_AUTH_SECRET: alchemy.secret.env.BETTER_AUTH_SECRET!,
 		BETTER_AUTH_URL: alchemy.env.BETTER_AUTH_URL!,
+		RESEND_API_KEY: alchemy.secret.env.RESEND_API_KEY!,
+		ARCJET_KEY: alchemy.secret.env.ARCJET_KEY!,
+		GITHUB_CLIENT_ID: alchemy.secret.env.GITHUB_CLIENT_ID!,
+		GITHUB_CLIENT_SECRET: alchemy.secret.env.GITHUB_CLIENT_SECRET!,
+		GOOGLE_CLIENT_ID: alchemy.secret.env.GOOGLE_CLIENT_ID!,
+		GOOGLE_CLIENT_SECRET: alchemy.secret.env.GOOGLE_CLIENT_SECRET!,
+		TWITTER_CLIENT_ID: alchemy.secret.env.TWITTER_CLIENT_ID!,
+		TWITTER_CLIENT_SECRET: alchemy.secret.env.TWITTER_CLIENT_SECRET!,
+		STORAGE_BUCKET: storageBucket,
 	},
 	dev: {
 		port: 3000,

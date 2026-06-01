@@ -1,5 +1,4 @@
 {
-	"$schema": "https://turbo.build/schema.json",
 	"ui": "tui",
 	"tasks": {
 		"build": {
@@ -30,6 +29,9 @@
 		"db:studio": {
 			"cache": false,
 			"persistent": true
+		},
+		"db:seed": {
+			"cache": false
 		},
 		"deploy": {
 			"cache": false

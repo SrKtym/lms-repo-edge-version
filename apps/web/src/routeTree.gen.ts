@@ -9,18 +9,29 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as MyPageRouteRouteImport } from './routes/_my-page/route'
+import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MyPageSchedulesRouteImport } from './routes/_my-page/schedules'
+import { Route as MyPageRegisterCoursesRouteImport } from './routes/_my-page/register-courses'
+import { Route as MyPageProfileRouteImport } from './routes/_my-page/profile'
+import { Route as MyPageNotificationsRouteImport } from './routes/_my-page/notifications'
+import { Route as MyPageDashboardRouteImport } from './routes/_my-page/dashboard'
+import { Route as MyPageCourseListRouteImport } from './routes/_my-page/course-list'
+import { Route as AuthVerifyOtpRouteImport } from './routes/_auth/verify-otp'
+import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up'
+import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
+import { Route as AuthSetTwofactorRouteImport } from './routes/_auth/set-twofactor'
+import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
+import { Route as AuthRequestResetPasswordRouteImport } from './routes/_auth/request-reset-password'
+import { Route as AuthAddPasskeyRouteImport } from './routes/_auth/add-passkey'
 
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const MyPageRouteRoute = MyPageRouteRouteImport.update({
+  id: '/_my-page',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
+const AuthRouteRoute = AuthRouteRouteImport.update({
+  id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -28,51 +39,197 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MyPageSchedulesRoute = MyPageSchedulesRouteImport.update({
+  id: '/schedules',
+  path: '/schedules',
+  getParentRoute: () => MyPageRouteRoute,
+} as any)
+const MyPageRegisterCoursesRoute = MyPageRegisterCoursesRouteImport.update({
+  id: '/register-courses',
+  path: '/register-courses',
+  getParentRoute: () => MyPageRouteRoute,
+} as any)
+const MyPageProfileRoute = MyPageProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => MyPageRouteRoute,
+} as any)
+const MyPageNotificationsRoute = MyPageNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => MyPageRouteRoute,
+} as any)
+const MyPageDashboardRoute = MyPageDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => MyPageRouteRoute,
+} as any)
+const MyPageCourseListRoute = MyPageCourseListRouteImport.update({
+  id: '/course-list',
+  path: '/course-list',
+  getParentRoute: () => MyPageRouteRoute,
+} as any)
+const AuthVerifyOtpRoute = AuthVerifyOtpRouteImport.update({
+  id: '/verify-otp',
+  path: '/verify-otp',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthSignUpRoute = AuthSignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthSignInRoute = AuthSignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthSetTwofactorRoute = AuthSetTwofactorRouteImport.update({
+  id: '/set-twofactor',
+  path: '/set-twofactor',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthRequestResetPasswordRoute =
+  AuthRequestResetPasswordRouteImport.update({
+    id: '/request-reset-password',
+    path: '/request-reset-password',
+    getParentRoute: () => AuthRouteRoute,
+  } as any)
+const AuthAddPasskeyRoute = AuthAddPasskeyRouteImport.update({
+  id: '/add-passkey',
+  path: '/add-passkey',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
-  '/login': typeof LoginRoute
+  '/add-passkey': typeof AuthAddPasskeyRoute
+  '/request-reset-password': typeof AuthRequestResetPasswordRoute
+  '/reset-password': typeof AuthResetPasswordRoute
+  '/set-twofactor': typeof AuthSetTwofactorRoute
+  '/sign-in': typeof AuthSignInRoute
+  '/sign-up': typeof AuthSignUpRoute
+  '/verify-otp': typeof AuthVerifyOtpRoute
+  '/course-list': typeof MyPageCourseListRoute
+  '/dashboard': typeof MyPageDashboardRoute
+  '/notifications': typeof MyPageNotificationsRoute
+  '/profile': typeof MyPageProfileRoute
+  '/register-courses': typeof MyPageRegisterCoursesRoute
+  '/schedules': typeof MyPageSchedulesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
-  '/login': typeof LoginRoute
+  '/add-passkey': typeof AuthAddPasskeyRoute
+  '/request-reset-password': typeof AuthRequestResetPasswordRoute
+  '/reset-password': typeof AuthResetPasswordRoute
+  '/set-twofactor': typeof AuthSetTwofactorRoute
+  '/sign-in': typeof AuthSignInRoute
+  '/sign-up': typeof AuthSignUpRoute
+  '/verify-otp': typeof AuthVerifyOtpRoute
+  '/course-list': typeof MyPageCourseListRoute
+  '/dashboard': typeof MyPageDashboardRoute
+  '/notifications': typeof MyPageNotificationsRoute
+  '/profile': typeof MyPageProfileRoute
+  '/register-courses': typeof MyPageRegisterCoursesRoute
+  '/schedules': typeof MyPageSchedulesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
-  '/login': typeof LoginRoute
+  '/_auth': typeof AuthRouteRouteWithChildren
+  '/_my-page': typeof MyPageRouteRouteWithChildren
+  '/_auth/add-passkey': typeof AuthAddPasskeyRoute
+  '/_auth/request-reset-password': typeof AuthRequestResetPasswordRoute
+  '/_auth/reset-password': typeof AuthResetPasswordRoute
+  '/_auth/set-twofactor': typeof AuthSetTwofactorRoute
+  '/_auth/sign-in': typeof AuthSignInRoute
+  '/_auth/sign-up': typeof AuthSignUpRoute
+  '/_auth/verify-otp': typeof AuthVerifyOtpRoute
+  '/_my-page/course-list': typeof MyPageCourseListRoute
+  '/_my-page/dashboard': typeof MyPageDashboardRoute
+  '/_my-page/notifications': typeof MyPageNotificationsRoute
+  '/_my-page/profile': typeof MyPageProfileRoute
+  '/_my-page/register-courses': typeof MyPageRegisterCoursesRoute
+  '/_my-page/schedules': typeof MyPageSchedulesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/login'
+  fullPaths:
+    | '/'
+    | '/add-passkey'
+    | '/request-reset-password'
+    | '/reset-password'
+    | '/set-twofactor'
+    | '/sign-in'
+    | '/sign-up'
+    | '/verify-otp'
+    | '/course-list'
+    | '/dashboard'
+    | '/notifications'
+    | '/profile'
+    | '/register-courses'
+    | '/schedules'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/login'
-  id: '__root__' | '/' | '/dashboard' | '/login'
+  to:
+    | '/'
+    | '/add-passkey'
+    | '/request-reset-password'
+    | '/reset-password'
+    | '/set-twofactor'
+    | '/sign-in'
+    | '/sign-up'
+    | '/verify-otp'
+    | '/course-list'
+    | '/dashboard'
+    | '/notifications'
+    | '/profile'
+    | '/register-courses'
+    | '/schedules'
+  id:
+    | '__root__'
+    | '/'
+    | '/_auth'
+    | '/_my-page'
+    | '/_auth/add-passkey'
+    | '/_auth/request-reset-password'
+    | '/_auth/reset-password'
+    | '/_auth/set-twofactor'
+    | '/_auth/sign-in'
+    | '/_auth/sign-up'
+    | '/_auth/verify-otp'
+    | '/_my-page/course-list'
+    | '/_my-page/dashboard'
+    | '/_my-page/notifications'
+    | '/_my-page/profile'
+    | '/_my-page/register-courses'
+    | '/_my-page/schedules'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DashboardRoute: typeof DashboardRoute
-  LoginRoute: typeof LoginRoute
+  AuthRouteRoute: typeof AuthRouteRouteWithChildren
+  MyPageRouteRoute: typeof MyPageRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
+    '/_my-page': {
+      id: '/_my-page'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof MyPageRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -82,13 +239,150 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_my-page/schedules': {
+      id: '/_my-page/schedules'
+      path: '/schedules'
+      fullPath: '/schedules'
+      preLoaderRoute: typeof MyPageSchedulesRouteImport
+      parentRoute: typeof MyPageRouteRoute
+    }
+    '/_my-page/register-courses': {
+      id: '/_my-page/register-courses'
+      path: '/register-courses'
+      fullPath: '/register-courses'
+      preLoaderRoute: typeof MyPageRegisterCoursesRouteImport
+      parentRoute: typeof MyPageRouteRoute
+    }
+    '/_my-page/profile': {
+      id: '/_my-page/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof MyPageProfileRouteImport
+      parentRoute: typeof MyPageRouteRoute
+    }
+    '/_my-page/notifications': {
+      id: '/_my-page/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof MyPageNotificationsRouteImport
+      parentRoute: typeof MyPageRouteRoute
+    }
+    '/_my-page/dashboard': {
+      id: '/_my-page/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof MyPageDashboardRouteImport
+      parentRoute: typeof MyPageRouteRoute
+    }
+    '/_my-page/course-list': {
+      id: '/_my-page/course-list'
+      path: '/course-list'
+      fullPath: '/course-list'
+      preLoaderRoute: typeof MyPageCourseListRouteImport
+      parentRoute: typeof MyPageRouteRoute
+    }
+    '/_auth/verify-otp': {
+      id: '/_auth/verify-otp'
+      path: '/verify-otp'
+      fullPath: '/verify-otp'
+      preLoaderRoute: typeof AuthVerifyOtpRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/_auth/sign-up': {
+      id: '/_auth/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof AuthSignUpRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/_auth/sign-in': {
+      id: '/_auth/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof AuthSignInRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/_auth/set-twofactor': {
+      id: '/_auth/set-twofactor'
+      path: '/set-twofactor'
+      fullPath: '/set-twofactor'
+      preLoaderRoute: typeof AuthSetTwofactorRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/_auth/reset-password': {
+      id: '/_auth/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof AuthResetPasswordRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/_auth/request-reset-password': {
+      id: '/_auth/request-reset-password'
+      path: '/request-reset-password'
+      fullPath: '/request-reset-password'
+      preLoaderRoute: typeof AuthRequestResetPasswordRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/_auth/add-passkey': {
+      id: '/_auth/add-passkey'
+      path: '/add-passkey'
+      fullPath: '/add-passkey'
+      preLoaderRoute: typeof AuthAddPasskeyRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
   }
 }
 
+interface AuthRouteRouteChildren {
+  AuthAddPasskeyRoute: typeof AuthAddPasskeyRoute
+  AuthRequestResetPasswordRoute: typeof AuthRequestResetPasswordRoute
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
+  AuthSetTwofactorRoute: typeof AuthSetTwofactorRoute
+  AuthSignInRoute: typeof AuthSignInRoute
+  AuthSignUpRoute: typeof AuthSignUpRoute
+  AuthVerifyOtpRoute: typeof AuthVerifyOtpRoute
+}
+
+const AuthRouteRouteChildren: AuthRouteRouteChildren = {
+  AuthAddPasskeyRoute: AuthAddPasskeyRoute,
+  AuthRequestResetPasswordRoute: AuthRequestResetPasswordRoute,
+  AuthResetPasswordRoute: AuthResetPasswordRoute,
+  AuthSetTwofactorRoute: AuthSetTwofactorRoute,
+  AuthSignInRoute: AuthSignInRoute,
+  AuthSignUpRoute: AuthSignUpRoute,
+  AuthVerifyOtpRoute: AuthVerifyOtpRoute,
+}
+
+const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
+  AuthRouteRouteChildren,
+)
+
+interface MyPageRouteRouteChildren {
+  MyPageCourseListRoute: typeof MyPageCourseListRoute
+  MyPageDashboardRoute: typeof MyPageDashboardRoute
+  MyPageNotificationsRoute: typeof MyPageNotificationsRoute
+  MyPageProfileRoute: typeof MyPageProfileRoute
+  MyPageRegisterCoursesRoute: typeof MyPageRegisterCoursesRoute
+  MyPageSchedulesRoute: typeof MyPageSchedulesRoute
+}
+
+const MyPageRouteRouteChildren: MyPageRouteRouteChildren = {
+  MyPageCourseListRoute: MyPageCourseListRoute,
+  MyPageDashboardRoute: MyPageDashboardRoute,
+  MyPageNotificationsRoute: MyPageNotificationsRoute,
+  MyPageProfileRoute: MyPageProfileRoute,
+  MyPageRegisterCoursesRoute: MyPageRegisterCoursesRoute,
+  MyPageSchedulesRoute: MyPageSchedulesRoute,
+}
+
+const MyPageRouteRouteWithChildren = MyPageRouteRoute._addFileChildren(
+  MyPageRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DashboardRoute: DashboardRoute,
-  LoginRoute: LoginRoute,
+  AuthRouteRoute: AuthRouteRouteWithChildren,
+  MyPageRouteRoute: MyPageRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,0 +1,11 @@
+{
+	"extends": "@lms-repo/config/tsconfig.base.json",
+	"compilerOptions": {
+		"baseUrl": ".",
+		"lib": ["ESNext", "DOM"],
+		"jsx": "react-jsx",
+		"paths": {
+			"@lms-repo/emails/*": ["./src/*"]
+		}
+	}
+}

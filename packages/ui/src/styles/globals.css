@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import "@heroui/styles";
 @source "../../../apps/**/*.{ts,tsx}";
 @source "../**/*.{ts,tsx}";
 
@@ -9,18 +9,18 @@
 :root {
 	--background: oklch(1 0 0);
 	--foreground: oklch(0.145 0 0);
-	--card: oklch(1 0 0);
+	--card: oklch(0.985 0 0);
 	--card-foreground: oklch(0.145 0 0);
 	--popover: oklch(1 0 0);
 	--popover-foreground: oklch(0.145 0 0);
-	--primary: oklch(0.205 0 0);
-	--primary-foreground: oklch(0.985 0 0);
-	--secondary: oklch(0.97 0 0);
+	--primary: oklch(41.133% 0.27714 266.001);
+	--primary-foreground: oklch(1 0 0);
+	--secondary: oklch(0.556 0 0);
 	--secondary-foreground: oklch(0.205 0 0);
-	--muted: oklch(0.97 0 0);
+	--muted: oklch(70.7% 0.022 261.325);
 	--muted-foreground: oklch(0.556 0 0);
-	--accent: oklch(0.97 0 0);
-	--accent-foreground: oklch(0.205 0 0);
+	--accent: oklch(41.133% 0.27714 266.001);
+	--accent-foreground: oklch(0.985 0 0);
 	--destructive: oklch(0.58 0.22 27);
 	--border: oklch(0.922 0 0);
 	--input: oklch(0.922 0 0);
@@ -48,14 +48,14 @@
 	--card-foreground: oklch(0.985 0 0);
 	--popover: oklch(0.205 0 0);
 	--popover-foreground: oklch(0.985 0 0);
-	--primary: oklch(0.87 0 0);
+	--primary: oklch(77.291% 0.1175 287.73);
 	--primary-foreground: oklch(0.205 0 0);
-	--secondary: oklch(0.269 0 0);
+	--secondary: oklch(0.556 0 0);
 	--secondary-foreground: oklch(0.985 0 0);
-	--muted: oklch(0.269 0 0);
+	--muted: oklch(70.7% 0.022 261.325);
 	--muted-foreground: oklch(0.708 0 0);
-	--accent: oklch(0.371 0 0);
-	--accent-foreground: oklch(0.985 0 0);
+	--accent: oklch(77.291% 0.1175 287.73);
+	--accent-foreground: oklch(0.205 0 0);
 	--destructive: oklch(0.704 0.191 22.216);
 	--border: oklch(1 0 0 / 10%);
 	--input: oklch(1 0 0 / 15%);
@@ -122,9 +122,98 @@
 		@apply border-border outline-ring/50;
 	}
 	body {
-		@apply font-sans bg-background text-foreground;
+		@apply bg-background text-foreground relative;
 	}
 	html {
-		@apply font-sans;
+		@apply font-sans relative;
+	}
+	.nav-link {
+		@apply relative flex items-center gap-2 py-2;
+	}
+	.nav-link p {
+		@apply max-lg:hidden;
+	}
+	.nav-link.active {
+		@apply text-primary border-b-2 border-primary;
+	}
+	.nav-link.active::after {
+		@apply hidden;
+	}
+	.nav-link::after {
+		content: "";
+		@apply absolute left-0 bottom-0 h-[2px] w-full bg-secondary origin-center scale-x-0 transition-transform duration-300 ease-out;
+	}
+	.nav-link:hover::after {
+		@apply scale-x-100;
+	}
+	.nav-link-shrink {
+		@apply max-md:hidden;
+	}
+	.form-container {
+		@apply rounded-xl w-full max-w-[480px] m-auto p-6 gap-4 shadow-lg dark:shadow-gray-800;
+	}
+	.form-header {
+		@apply mb-6 text-center text-2xl font-bold;
+	}
+	.form-field {
+		@apply space-y-6;
+	}
+	.default-link {
+		@apply text-primary;
+	}
+	.default-link:hover {
+		@apply underline;
+	}
+	.timetable-container {
+		@apply overflow-auto w-full p-4 mb-5 space-y-4 bg-white rounded-lg shadow-sm lg:sticky top-20 dark:bg-secondary relative;
+	}
+	.timetable-header {
+		@apply text-2xl text-center mb-4;
+	}
+	.timetable-table {
+		@apply min-w-full table-fixed border border-gray-300;
+	}
+	.timetable-thead {
+		@apply bg-gray-100 dark:bg-gray-600;
+	}
+	.timetable-footer {
+		@apply flex justify-between items-center gap-3;
+	}
+	@keyframes blink {
+		0%,
+		100% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0;
+		}
+	}
+	.animate-blink {
+		animation: blink 1s infinite;
+	}
+}
+
+@layer components {
+	/* hero uiコンポーネントごとの設定 */
+	.button--primary {
+		@apply bg-primary text-primary-foreground hover:bg-primary/80;
+	}
+	.spinner--accent {
+		@apply text-primary;
+	}
+	.card {
+		@apply hover:shadow-lg transition-shadow duration-300 dark:hover:shadow-gray-800;
+	}
+	.card-title {
+		@apply text-xl;
+	}
+	.card-description {
+		@apply text-base text-gray-600 dark:text-gray-400;
+	}
+	.table__column {
+		@apply text-foreground;
+	}
+	.modal__dialog {
+		@apply bg-white/90 backdrop-blur-sm dark:bg-gray-800/90;
 	}
 }

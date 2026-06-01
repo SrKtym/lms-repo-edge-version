@@ -1,8 +1,20 @@
-import { relations } from "drizzle-orm";
-import { boolean, index, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import {
+	boolean,
+	index,
+	integer,
+	pgSchema,
+	text,
+	timestamp,
+} from "drizzle-orm/pg-core";
 
-export const user = pgTable("user", {
-	id: text("id").primaryKey(),
+// スキーマの定義
+export const betterAuth = pgSchema("better_auth");
+
+// ユーザー
+export const user = betterAuth.table("user", {
+	id: text("id")
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
 	name: text("name").notNull(),
 	email: text("email").notNull().unique(),
 	emailVerified: boolean("email_verified").default(false).notNull(),
@@ -12,12 +24,22 @@ export const user = pgTable("user", {
 		.defaultNow()
 		.$onUpdate(() => /* @__PURE__ */ new Date())
 		.notNull(),
+	username: text("username").unique(),
+	displayUsername: text("display_username"),
+	role: text("role"),
+	banned: boolean("banned"),
+	banReason: text("ban_reason"),
+	banExpires: timestamp("ban_expires"),
+	twoFactorEnabled: boolean("two_factor_enabled"),
 });
 
-export const session = pgTable(
+// セッション
+export const session = betterAuth.table(
 	"session",
 	{
-		id: text("id").primaryKey(),
+		id: text("id")
+			.primaryKey()
+			.$defaultFn(() => crypto.randomUUID()),
 		expiresAt: timestamp("expires_at").notNull(),
 		token: text("token").notNull().unique(),
 		createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -33,10 +55,13 @@ export const session = pgTable(
 	(table) => [index("session_userId_idx").on(table.userId)],
 );
 
-export const account = pgTable(
+// アカウント
+export const account = betterAuth.table(
 	"account",
 	{
-		id: text("id").primaryKey(),
+		id: text("id")
+			.primaryKey()
+			.$defaultFn(() => crypto.randomUUID()),
 		accountId: text("account_id").notNull(),
 		providerId: text("provider_id").notNull(),
 		userId: text("user_id")
@@ -57,10 +82,13 @@ export const account = pgTable(
 	(table) => [index("account_userId_idx").on(table.userId)],
 );
 
-export const verification = pgTable(
+// 認証
+export const verification = betterAuth.table(
 	"verification",
 	{
-		id: text("id").primaryKey(),
+		id: text("id")
+			.primaryKey()
+			.$defaultFn(() => crypto.randomUUID()),
 		identifier: text("identifier").notNull(),
 		value: text("value").notNull(),
 		expiresAt: timestamp("expires_at").notNull(),
@@ -73,21 +101,34 @@ export const verification = pgTable(
 	(table) => [index("verification_identifier_idx").on(table.identifier)],
 );
 
-export const userRelations = relations(user, ({ many }) => ({
-	sessions: many(session),
-	accounts: many(account),
-}));
+// 2要素認証
+export const twoFactor = betterAuth.table("two_factor", {
+	id: text("id")
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
+	secret: text("secret").notNull(),
+	backupCodes: text("backup_codes").notNull(),
+	verified: boolean("verified").notNull(),
+	userId: text("user_id")
+		.notNull()
+		.references(() => user.id, { onDelete: "cascade" }),
+});
 
-export const sessionRelations = relations(session, ({ one }) => ({
-	user: one(user, {
-		fields: [session.userId],
-		references: [user.id],
-	}),
-}));
-
-export const accountRelations = relations(account, ({ one }) => ({
-	user: one(user, {
-		fields: [account.userId],
-		references: [user.id],
-	}),
-}));
+// パスキー認証
+export const passkey = betterAuth.table("passkey", {
+	id: text("id")
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
+	name: text("name"),
+	publicKey: text("public_key").notNull(),
+	userId: text("user_id")
+		.notNull()
+		.references(() => user.id, { onDelete: "cascade" }),
+	credentialID: text("credential_id").notNull(),
+	counter: integer("counter").notNull(),
+	deviceType: text("device_type").notNull(),
+	backedUp: boolean("backed_up").notNull(),
+	transports: text("transports"),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+	aaguid: text("aaguid"),
+});

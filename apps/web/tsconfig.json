@@ -1,12 +1,9 @@
 {
+	"extends": "@lms-repo-edge-version/config/tsconfig.base.json",
 	"compilerOptions": {
-		"strict": true,
-		"esModuleInterop": true,
+		"baseUrl": ".",
+		"lib": ["ESNext", "DOM"],
 		"jsx": "react-jsx",
-		"target": "ESNext",
-		"module": "ESNext",
-		"moduleResolution": "Bundler",
-		"skipLibCheck": true,
 		"types": ["vite/client"],
 		"rootDirs": ["."],
 		"paths": {

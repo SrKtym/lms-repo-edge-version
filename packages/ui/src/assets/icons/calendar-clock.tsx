@@ -1,0 +1,26 @@
+export const CalendarClock = ({
+	width,
+	height,
+}: {
+	width?: number;
+	height?: number;
+}) => (
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		width={width}
+		height={height}
+		viewBox="0 0 24 24"
+	>
+		<title>Calendar Clock</title>
+		<g
+			fill="none"
+			stroke="currentColor"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			strokeWidth="2"
+		>
+			<path d="M16 14v2.2l1.6 1M16 2v4m5 1.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5M3 10h5m0-8v4" />
+			<circle cx="16" cy="16" r="6" />
+		</g>
+	</svg>
+);
