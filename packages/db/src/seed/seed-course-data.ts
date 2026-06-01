@@ -38,15 +38,16 @@ export async function seedCourseData() {
 	await createDb().transaction(async (tx) => {
 		try {
 			// 学部の登録
-			const insertedFaculties = await tx
+			await tx
 				.insert(faculties)
 				.values(facultyNames.map((name) => ({ name })))
-				.returning()
 				.onConflictDoNothing();
 
 			// 講義名から学部IDを引くためのマッピング: { "文学部": "faculty-id-1", "理学部": "faculty-id-2" }
+			// 全ての学部を取得してマッピングを作成
+			const allFaculties = await tx.select().from(faculties);
 			const facultyMapping = new Map(
-				insertedFaculties.map((f) => [f.name, f.id]),
+				allFaculties.map((f) => [f.name, f.id]),
 			);
 			const departmentNames = Object.values(coursesMaster).flatMap(Object.keys);
 			const departmentValues = departmentNames.map((name) => {
