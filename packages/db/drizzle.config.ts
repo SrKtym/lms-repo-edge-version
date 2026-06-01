@@ -1,8 +1,9 @@
 import dotenv from "dotenv";
 import { defineConfig } from "drizzle-kit";
 
+const env = process.env.NODE_ENV || "development";
 dotenv.config({
-	path: "../../apps/server/.env",
+	path: `../../apps/server/.env.${env}`,
 });
 
 export default defineConfig({
