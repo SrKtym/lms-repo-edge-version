@@ -9,6 +9,7 @@ const naturalScienceCourses = [
 	"卒業研究",
 ];
 
+// シーディング用の初期データ（各学科の配列内に講義名を記述することで追加可能）
 export const coursesMaster = {
 	文学部: {
 		史学科: [

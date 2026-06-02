@@ -3,6 +3,7 @@ import { createDb } from "../index";
 import { courseList } from "../mock/course-data";
 import { coursesMaster } from "../mock/course-master";
 import { courses, departments, faculties, professors, user } from "../schema";
+import type { Courses } from "../types";
 
 export async function seedCourseData() {
 	const facultyNames = Object.keys(coursesMaster).filter(
@@ -43,12 +44,10 @@ export async function seedCourseData() {
 				.values(facultyNames.map((name) => ({ name })))
 				.onConflictDoNothing();
 
-			// 講義名から学部IDを引くためのマッピング: { "文学部": "faculty-id-1", "理学部": "faculty-id-2" }
 			// 全ての学部を取得してマッピングを作成
 			const allFaculties = await tx.select().from(faculties);
-			const facultyMapping = new Map(
-				allFaculties.map((f) => [f.name, f.id]),
-			);
+			// 講義名から学部IDを引くためのマッピング: { "文学部": "faculty-id-1", "理学部": "faculty-id-2" }
+			const facultyMapping = new Map(allFaculties.map((f) => [f.name, f.id]));
 			const departmentNames = Object.values(coursesMaster).flatMap(Object.keys);
 			const departmentValues = departmentNames.map((name) => {
 				let facultyId: string | undefined;
@@ -80,7 +79,7 @@ export async function seedCourseData() {
 				insertedDepartments.map((d) => [d.name, d.id]),
 			);
 
-			const courseValues: (typeof courses.$inferInsert)[] = [];
+			const courseValues: Courses[] = [];
 
 			const professorIds = await tx
 				.select({ id: user.id })
@@ -91,7 +90,7 @@ export async function seedCourseData() {
 			const professorCourseCount = new Map<string, number>();
 			const professorDepartmentMap = new Map<string, string>(); // professorId -> departmentId
 
-			// ヘルパー
+			// ヘルパー: 学科ごとの講義割り当て制約を満たす教授を探す
 			function findSuitableProfessor(
 				departmentId: string,
 				professorIds: { id: string }[],
@@ -142,7 +141,7 @@ export async function seedCourseData() {
 				let minCount = Number.POSITIVE_INFINITY;
 				let minProfessorId: string | undefined;
 
-				for (const professor of professorIds) {
+				professorIds.forEach((professor) => {
 					const count = professorCourseCount.get(professor.id) || 0;
 					const assignedDept = professorDepartmentMap.get(professor.id);
 
@@ -158,7 +157,7 @@ export async function seedCourseData() {
 						minCount = count;
 						minProfessorId = professor.id;
 					}
-				}
+				});
 
 				if (minProfessorId) {
 					const currentCount = professorCourseCount.get(minProfessorId) || 0;
@@ -252,6 +251,7 @@ export async function seedCourseData() {
 				}),
 			);
 
+			// 教授データの登録
 			await tx.insert(professors).values(professorValues).onConflictDoNothing();
 			// 講義の登録
 			await tx.insert(courses).values(courseValues).onConflictDoNothing();
