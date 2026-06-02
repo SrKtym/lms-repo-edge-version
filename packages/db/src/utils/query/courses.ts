@@ -1,4 +1,4 @@
-import { and, eq, lte, or, sql } from "drizzle-orm";
+import { and, eq, lte, notInArray, or, sql } from "drizzle-orm";
 import { createDb } from "../../index";
 import {
 	courses,
@@ -11,40 +11,64 @@ import {
 
 // 学生が所属する学科に基づき、登録可能な講義のみを取得する
 export async function fetchCourses(
+	userId: string,
 	weekdays: number,
 	period: number,
 	limit = 10,
 	offset = 0,
 ) {
-	const result = await createDb()
-		.select({
-			id: courses.id,
-			name: courses.name,
-			weekdays: courses.weekdays,
-			period: courses.period,
-			credits: courses.credits,
-			targetGrade: courses.targetGrade,
-			requirements: courses.requirements,
-			classRoom: courses.classRoom,
-			professor: user.name,
-		})
-		.from(courses)
-		.innerJoin(user, eq(courses.professorId, user.id))
-		.innerJoin(departments, eq(courses.departmentId, departments.id))
-		.innerJoin(faculties, eq(departments.facultyId, faculties.id))
-		.innerJoin(students, lte(courses.targetGrade, students.grade))
-		.where(
-			and(
-				eq(courses.weekdays, weekdays),
-				eq(courses.period, period),
-				or(
-					eq(departments.id, students.departmentId),
-					eq(departments.name, "全学科"),
+	const result = await createDb().transaction(async (tx) => {
+		// ユーザーが既に履修済みの講義を取得
+		const completedCoursesByUser = await tx
+			.select({
+				courseId: registration.courseId,
+			})
+			.from(registration)
+			.where(
+				and(
+					eq(registration.userId, userId),
+					eq(registration.isCompleted, true),
 				),
-			),
-		)
-		.limit(limit)
-		.offset(offset);
+			);
+
+		const completedCourseIds = completedCoursesByUser.map(
+			({ courseId }) => courseId,
+		);
+
+		// 登録可能な講義を取得
+		const courseList = await tx
+			.select({
+				id: courses.id,
+				name: courses.name,
+				weekdays: courses.weekdays,
+				period: courses.period,
+				credits: courses.credits,
+				targetGrade: courses.targetGrade,
+				requirements: courses.requirements,
+				classRoom: courses.classRoom,
+				professor: user.name,
+			})
+			.from(courses)
+			.innerJoin(departments, eq(courses.departmentId, departments.id))
+			.innerJoin(faculties, eq(departments.facultyId, faculties.id))
+			.innerJoin(user, eq(courses.professorId, user.id))
+			.innerJoin(students, lte(courses.targetGrade, students.grade))
+			.where(
+				and(
+					eq(courses.weekdays, weekdays),
+					eq(courses.period, period),
+					notInArray(courses.id, completedCourseIds),
+					or(
+						eq(departments.id, students.departmentId),
+						eq(departments.name, "全学科"),
+					),
+				),
+			)
+			.limit(limit)
+			.offset(offset);
+
+		return courseList;
+	});
 
 	return result;
 }

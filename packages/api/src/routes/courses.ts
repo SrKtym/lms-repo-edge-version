@@ -38,12 +38,14 @@ export const coursesRoute = new Hono<{
 	)
 	// 講義検索
 	.get("/", async (c) => {
+		const { userId } = c.get("session");
 		const { weekdays, period, limit, offset } = c.req.query();
 		if (!weekdays || !period) {
 			return c.json([], 200);
 		}
 
 		const result = await fetchCourses(
+			userId,
 			Number(weekdays),
 			Number(period),
 			Number(limit),
