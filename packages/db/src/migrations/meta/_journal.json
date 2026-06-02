@@ -15,6 +15,13 @@
 			"when": 1780324449244,
 			"tag": "0001_faithful_ben_parker",
 			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "7",
+			"when": 1780390055820,
+			"tag": "0002_mixed_prowler",
+			"breakpoints": true
 		}
 	]
 }
