@@ -39,10 +39,10 @@ export const server = await Worker("server", {
 		GOOGLE_CLIENT_SECRET: alchemy.secret.env.GOOGLE_CLIENT_SECRET!,
 		TWITTER_CLIENT_ID: alchemy.secret.env.TWITTER_CLIENT_ID!,
 		TWITTER_CLIENT_SECRET: alchemy.secret.env.TWITTER_CLIENT_SECRET!,
-		STORAGE_BUCKET: storageBucket,
 		R2_ACCESS_KEY_ID: alchemy.secret.env.R2_ACCESS_KEY_ID!,
 		R2_SECRET_ACCESS_KEY: alchemy.secret.env.R2_SECRET_ACCESS_KEY!,
 		R2_ACCOUNT_ID: alchemy.env.R2_ACCOUNT_ID!,
+		STORAGE_BUCKET: storageBucket,
 	},
 	dev: {
 		port: 3000,

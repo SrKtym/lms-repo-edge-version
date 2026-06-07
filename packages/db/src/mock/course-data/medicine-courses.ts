@@ -429,4 +429,3 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 		classRoom: "HL106",
 	},
 ];
-
