@@ -21,7 +21,7 @@ export const Route = createRootRouteWithContext()({
 	head: () => ({
 		meta: [
 			{
-				title: "LMS-repo",
+				title: "ホーム | LMS-repo",
 			},
 			{
 				name: "description",

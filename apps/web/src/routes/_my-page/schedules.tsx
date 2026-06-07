@@ -1,16 +1,16 @@
+import type { FetchSchedulesReturnType } from "@lms-repo-edge-version/db/utils/query/schedules";
+import { CalendarClock } from "@lms-repo-edge-version/ui/assets/icons/calendar-clock";
+import { DefaultButton } from "@lms-repo-edge-version/ui/components/button";
 import { LazyMotionProvider } from "@lms-repo-edge-version/ui/components/lazymotion-provider";
 import { createFileRoute } from "@tanstack/react-router";
 import * as m from "motion/react-m";
-import { useRef, useState } from "react";
+import { useState } from "react";
+import { z } from "zod";
 import { CreateScheduleForm } from "@/components/_my-page/schedules/create-schedule-form";
 import { DayView } from "@/components/_my-page/schedules/day-view";
 import { MonthView } from "@/components/_my-page/schedules/month-view";
 import { WeekView } from "@/components/_my-page/schedules/week-view";
-import {
-	useDeleteSchedule,
-	useFetchSchedule,
-	useSchedules,
-} from "@/hooks/schedules";
+import { useDeleteSchedule, useSchedules } from "@/hooks/schedules";
 import { useCourseEvents } from "@/hooks/use-course-events";
 import { QUERY_CONFIG, queryClient } from "@/lib/query-client";
 import {
@@ -18,9 +18,17 @@ import {
 	fetchSchedulesQueryFn,
 } from "@/utils/query-utils";
 
+const views = ["month", "week", "day"] as const;
+type View = (typeof views)[number];
+const searchSchema = z.object({
+	view: z.enum(views).optional(),
+});
+
 export const Route = createFileRoute("/_my-page/schedules")({
 	component: RouteComponent,
-	loader: async () => {
+	validateSearch: (search) => searchSchema.parse(search),
+	loaderDeps: ({ search: { view } }) => ({ view }),
+	loader: async ({ deps: { view = "month" } }) => {
 		// キャッシュからデータ取得（既にプリフェッチ済み）
 		const [courses, initialSchedules] = await Promise.all([
 			queryClient.ensureQueryData({
@@ -33,38 +41,55 @@ export const Route = createFileRoute("/_my-page/schedules")({
 				queryFn: fetchSchedulesQueryFn,
 			}),
 		]);
-		return { courses, initialSchedules };
+		return { courses, initialSchedules, view };
 	},
+	head: () => ({
+		meta: [
+			{
+				title: "スケジュール | LMS-repo",
+			},
+		],
+	}),
 });
 
 function RouteComponent() {
-	const views = ["month", "week", "day"] as const;
-	const { courses, initialSchedules } = Route.useLoaderData();
-	const [selectedView, setSelectedView] =
-		useState<(typeof views)[number]>("month");
+	const { courses, initialSchedules, view } = Route.useLoaderData();
+	const navigate = Route.useNavigate();
+
+	const [selectedView, setSelectedView] = useState<View>(view);
 	const [currentDate, setCurrentDate] = useState(new Date());
-	const [editingScheduleId, setEditingScheduleId] = useState<string | null>(
-		null,
-	);
-	const modalTriggerRef = useRef<HTMLButtonElement>(null);
+	const [editingSchedule, setEditingSchedule] =
+		useState<FetchSchedulesReturnType[number]>();
+	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	// スケジュールデータを取得
 	const { data: schedules = [] } = useSchedules(initialSchedules);
 	// スケジュール削除用のミューテーション
 	const { mutate: deleteSchedule } = useDeleteSchedule();
-	// 編集対象のスケジュールを取得
-	const { data: editingSchedule = [] } = useFetchSchedule(
-		editingScheduleId || "",
-	);
+
 	const { getEventsForDay } = useCourseEvents(courses, schedules);
+
+	// ビュー変更時の処理
+	const handleViewChange = (view: View) => {
+		setSelectedView(view);
+		navigate({
+			search: {
+				view,
+			},
+		});
+	};
 
 	// 編集ボタンがクリックされた時
 	const handleEditSchedule = (scheduleId: string) => {
-		setEditingScheduleId(scheduleId);
-		// モーダルを開くためにトリガーボタンをクリック
-		setTimeout(() => {
-			modalTriggerRef.current?.click();
-		}, 100);
+		const schedule = schedules.find(({ id }) => id === scheduleId);
+		setEditingSchedule(schedule);
+		setIsModalOpen(true);
+	};
+
+	// 新規作成ボタンがクリックされた時
+	const handleCreateSchedule = () => {
+		setEditingSchedule(undefined);
+		setIsModalOpen(true);
 	};
 
 	// 月の最初の日と最後の日を取得
@@ -238,7 +263,10 @@ function RouteComponent() {
 									key={view}
 									whileHover={{ scale: 1.05 }}
 									whileTap={{ scale: 0.95 }}
-									onClick={() => setSelectedView(view)}
+									onClick={() => {
+										setSelectedView(view);
+										handleViewChange(view);
+									}}
 									className={`rounded-md px-4 py-2 font-medium text-sm transition-colors${
 										selectedView === view
 											? "bg-white text-gray-900 shadow-sm dark:bg-gray-700 dark:text-white"
@@ -249,13 +277,19 @@ function RouteComponent() {
 									{view === "month" ? "月" : view === "week" ? "週" : "日"}
 								</m.button>
 							))}
-							<CreateScheduleForm
-								initialData={editingSchedule}
-								triggerRef={modalTriggerRef}
-							/>
+							<DefaultButton onPress={handleCreateSchedule}>
+								<CalendarClock />
+								スケジュールを追加
+							</DefaultButton>
 						</div>
 					</div>
 				</m.div>
+
+				<CreateScheduleForm
+					initialData={editingSchedule}
+					isOpen={isModalOpen}
+					onOpenChange={setIsModalOpen}
+				/>
 
 				{/*  */}
 				<m.div

@@ -5,6 +5,13 @@ import TotpVerifyForm from "@/components/_auth/verify-otp/totp-verify-form";
 
 export const Route = createFileRoute("/_auth/verify-otp")({
 	component: RouteComponent,
+	head: () => ({
+		meta: [
+			{
+				title: "OTP認証 | LMS-repo",
+			},
+		],
+	}),
 });
 
 function RouteComponent() {

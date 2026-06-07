@@ -53,6 +53,13 @@ export const Route = createFileRoute("/_my-page/notifications")({
 		});
 		return { initialNotifications, limit, page, filter };
 	},
+	head: () => ({
+		meta: [
+			{
+				title: "通知一覧 | LMS-repo",
+			},
+		],
+	}),
 });
 
 function RouteComponent() {

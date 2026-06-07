@@ -53,6 +53,13 @@ export const Route = createFileRoute("/_my-page/profile")({
 			initialSettings,
 		};
 	},
+	head: () => ({
+		meta: [
+			{
+				title: "プロフィール | LMS-repo",
+			},
+		],
+	}),
 });
 
 function RouteComponent() {

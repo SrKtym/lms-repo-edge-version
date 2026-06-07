@@ -30,6 +30,13 @@ export const Route = createFileRoute("/_auth/add-passkey")({
 			});
 		}
 	},
+	head: () => ({
+		meta: [
+			{
+				title: "パスキー登録 | LMS-repo",
+			},
+		],
+	}),
 });
 
 function RouteComponent() {

@@ -48,6 +48,13 @@ export const Route = createFileRoute("/_my-page/course-list")({
 
 		return { courses, announcements, assignments, submission };
 	},
+	head: () => ({
+		meta: [
+			{
+				title: "講義一覧 | LMS-repo",
+			},
+		],
+	}),
 });
 
 function RouteComponent() {

@@ -59,6 +59,13 @@ export const Route = createFileRoute("/_my-page/dashboard")({
 			submissions,
 		};
 	},
+	head: () => ({
+		meta: [
+			{
+				title: "ダッシュボード | LMS-repo",
+			},
+		],
+	}),
 });
 
 function RouteComponent() {

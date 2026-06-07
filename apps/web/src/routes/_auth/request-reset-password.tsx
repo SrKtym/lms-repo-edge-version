@@ -11,6 +11,13 @@ import { z } from "zod";
 
 export const Route = createFileRoute("/_auth/request-reset-password")({
 	component: RouteComponent,
+	head: () => ({
+		meta: [
+			{
+				title: "パスワードリセットの申請 | LMS-repo",
+			},
+		],
+	}),
 });
 
 function RouteComponent() {

@@ -5,10 +5,19 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { z } from "zod";
 import ResetPassword from "@/components/_auth/reset-password/reset-password";
 
+const searchSchema = z.object({
+	token: z.string().optional(),
+});
+
 export const Route = createFileRoute("/_auth/reset-password")({
 	component: RouteComponent,
-	validateSearch: z.object({
-		token: z.string().optional(),
+	validateSearch: searchSchema,
+	head: () => ({
+		meta: [
+			{
+				title: "パスワードのリセット | LMS-repo",
+			},
+		],
 	}),
 });
 

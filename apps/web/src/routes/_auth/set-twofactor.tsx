@@ -39,6 +39,13 @@ export const Route = createFileRoute("/_auth/set-twofactor")({
 		const { twoFactorEnabled } = context.session.data.user;
 		return { twoFactorEnabled };
 	},
+	head: () => ({
+		meta: [
+			{
+				title: "2要素認証の設定 | LMS-repo",
+			},
+		],
+	}),
 });
 
 function RouteComponent() {

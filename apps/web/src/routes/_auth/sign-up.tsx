@@ -10,6 +10,13 @@ import { SocialLoginField } from "@/components/_auth/social-login-field";
 
 export const Route = createFileRoute("/_auth/sign-up")({
 	component: RouteComponent,
+	head: () => ({
+		meta: [
+			{
+				title: "サインアップ | LMS-repo",
+			},
+		],
+	}),
 });
 
 function RouteComponent() {
