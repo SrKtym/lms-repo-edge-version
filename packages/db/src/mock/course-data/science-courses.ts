@@ -68,7 +68,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "位相数学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 4,
 		period: 4,
 		credits: 2,
@@ -77,7 +77,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "関数解析学",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 5,
 		period: 5,
 		credits: 2,
@@ -86,7 +86,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "微分方程式",
-		targetGrade: 3,
+		targetGrade: 1,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -95,7 +95,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "数値解析",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -104,7 +104,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "離散数学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -177,7 +177,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "相対性理論",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -195,7 +195,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "音響学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -213,7 +213,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "宇宙物理学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 5,
 		period: 1,
 		credits: 2,
@@ -222,7 +222,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "素粒子物理学",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -231,7 +231,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "プラズマ物理学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -240,7 +240,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "生物物理学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -331,7 +331,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "環境化学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 4,
 		period: 5,
 		credits: 2,
@@ -340,7 +340,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "材料化学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 5,
 		period: 1,
 		credits: 2,
@@ -349,7 +349,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "工業化学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -358,7 +358,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "医薬品化学",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -367,7 +367,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "食品化学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -376,7 +376,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "触媒化学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 4,
 		period: 5,
 		credits: 2,
@@ -385,7 +385,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "錯体化学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 5,
 		period: 1,
 		credits: 2,
@@ -394,7 +394,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "放射化学",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -403,7 +403,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "計算化学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -476,7 +476,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "生物物理学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 5,
 		period: 4,
 		credits: 2,
@@ -485,7 +485,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "生物化学",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 1,
 		period: 5,
 		credits: 2,
@@ -494,7 +494,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "微生物学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 2,
 		period: 1,
 		credits: 2,
@@ -521,7 +521,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "免疫学",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 5,
 		period: 4,
 		credits: 2,
@@ -530,7 +530,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "神経生物学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 1,
 		period: 5,
 		credits: 2,
@@ -539,7 +539,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "生物統計学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 2,
 		period: 1,
 		credits: 2,
@@ -612,7 +612,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "地球物理学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 1,
 		period: 4,
 		credits: 2,
@@ -621,7 +621,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "地球化学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 2,
 		period: 5,
 		credits: 2,
@@ -630,7 +630,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "火山学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 3,
 		period: 1,
 		credits: 2,
@@ -639,7 +639,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "地震学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 4,
 		period: 2,
 		credits: 2,
@@ -648,7 +648,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "海洋地質学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 5,
 		period: 3,
 		credits: 2,
@@ -657,7 +657,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "惑星地質学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 1,
 		period: 4,
 		credits: 2,
@@ -666,7 +666,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "環境地質学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 2,
 		period: 5,
 		credits: 2,
@@ -675,7 +675,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "応用地質学",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 3,
 		period: 1,
 		credits: 2,
@@ -684,7 +684,7 @@ export const scienceCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "地質工学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 4,
 		period: 2,
 		credits: 2,

@@ -77,7 +77,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "現代史",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 2,
 		period: 2,
 		credits: 2,
@@ -86,7 +86,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "社会経済史",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 3,
 		period: 3,
 		credits: 2,
@@ -95,7 +95,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "文化史",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 4,
 		period: 4,
 		credits: 2,
@@ -104,7 +104,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "思想史",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 5,
 		period: 5,
 		credits: 2,
@@ -113,7 +113,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "宗教史",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -122,7 +122,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "美術史",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -131,7 +131,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "音楽史",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -140,7 +140,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "史学概論",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 4,
 		period: 5,
 		credits: 2,
@@ -204,7 +204,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "現代哲学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 2,
 		period: 2,
 		credits: 2,
@@ -213,7 +213,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "存在論",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 3,
 		period: 3,
 		credits: 2,
@@ -222,7 +222,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "認識論",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 4,
 		period: 4,
 		credits: 2,
@@ -231,7 +231,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "形而上学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 5,
 		period: 5,
 		credits: 2,
@@ -240,7 +240,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "美学",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -249,7 +249,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "宗教学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -258,7 +258,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "言語哲学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -267,7 +267,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "社会哲学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 4,
 		period: 5,
 		credits: 2,
@@ -322,7 +322,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "集団心理学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 1,
 		period: 1,
 		credits: 2,
@@ -331,7 +331,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "犯罪心理学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 2,
 		period: 2,
 		credits: 2,
@@ -340,7 +340,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "司法心理学",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 3,
 		period: 3,
 		credits: 2,
@@ -349,7 +349,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "スポーツ心理学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 4,
 		period: 4,
 		credits: 2,
@@ -358,7 +358,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "音楽心理学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 5,
 		period: 5,
 		credits: 2,
@@ -367,7 +367,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "美術心理学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -376,7 +376,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "色彩心理学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -385,7 +385,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "環境心理学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -394,7 +394,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "交通心理学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 4,
 		period: 5,
 		credits: 2,
@@ -403,7 +403,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "消費者心理学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 5,
 		period: 1,
 		credits: 2,
@@ -412,7 +412,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "広告心理学",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -421,7 +421,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "マーケティング心理学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -430,7 +430,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "比較心理学",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -439,7 +439,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "神経心理学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 4,
 		period: 5,
 		credits: 2,
@@ -448,7 +448,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "応用心理学",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 5,
 		period: 1,
 		credits: 2,
@@ -457,7 +457,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "心理学研究法",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -466,7 +466,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "心理統計学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -475,7 +475,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "心理測定法",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -484,7 +484,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "心理実験法",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 4,
 		period: 5,
 		credits: 2,
@@ -566,7 +566,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "古典文学講読",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 4,
 		period: 4,
 		credits: 2,
@@ -575,7 +575,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "現代文学講読",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 5,
 		period: 5,
 		credits: 2,
@@ -584,7 +584,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "詩歌論",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 1,
 		period: 1,
 		credits: 2,
@@ -593,7 +593,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "小説論",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 2,
 		period: 2,
 		credits: 2,
@@ -602,7 +602,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "戯曲論",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 3,
 		period: 3,
 		credits: 2,
@@ -611,7 +611,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "評論論",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 4,
 		period: 4,
 		credits: 2,
@@ -620,7 +620,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "創作演習",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 5,
 		period: 5,
 		credits: 2,
@@ -629,7 +629,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "編集演習",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -638,7 +638,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "出版論",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -647,7 +647,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "メディア論",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -656,7 +656,7 @@ export const literatureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "ジャーナリズム論",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 4,
 		period: 5,
 		credits: 2,

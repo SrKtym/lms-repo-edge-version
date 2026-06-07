@@ -68,7 +68,7 @@ export const sociologyCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "農村社会学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 4,
 		period: 4,
 		credits: 2,
@@ -86,7 +86,7 @@ export const sociologyCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "医療社会学",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -95,7 +95,7 @@ export const sociologyCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "犯罪社会学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -123,7 +123,7 @@ export const sociologyCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "健康心理学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 5,
 		period: 1,
 		credits: 2,
@@ -159,7 +159,7 @@ export const sociologyCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "臨床心理学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 4,
 		period: 5,
 		credits: 2,
@@ -186,7 +186,7 @@ export const sociologyCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "犯罪心理学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -195,7 +195,7 @@ export const sociologyCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "広告心理学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -204,7 +204,7 @@ export const sociologyCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "コミュニケーション心理学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 4,
 		period: 5,
 		credits: 2,
@@ -222,7 +222,7 @@ export const sociologyCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "比較心理学",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -231,7 +231,7 @@ export const sociologyCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "生理心理学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 2,
 		period: 3,
 		credits: 2,

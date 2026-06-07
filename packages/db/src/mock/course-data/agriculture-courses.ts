@@ -59,7 +59,7 @@ export const agricultureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "食品衛生学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 3,
 		period: 3,
 		credits: 2,
@@ -77,7 +77,7 @@ export const agricultureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "環境化学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 5,
 		period: 5,
 		credits: 2,
@@ -95,7 +95,7 @@ export const agricultureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "生物資源利用学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -104,7 +104,7 @@ export const agricultureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "バイオマスエネルギー",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -113,7 +113,7 @@ export const agricultureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "再生可能エネルギー",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 4,
 		period: 5,
 		credits: 2,
@@ -122,7 +122,7 @@ export const agricultureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "環境保全学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 5,
 		period: 1,
 		credits: 2,
@@ -131,7 +131,7 @@ export const agricultureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "循環型社会論",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -140,7 +140,7 @@ export const agricultureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "持続可能開発論",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -177,7 +177,7 @@ export const agricultureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "森林土木学",
-		targetGrade: 3,
+		targetGrade: 2,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -195,7 +195,7 @@ export const agricultureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "森林保護学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -213,7 +213,7 @@ export const agricultureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "森林経営学",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 5,
 		period: 1,
 		credits: 2,
@@ -222,7 +222,7 @@ export const agricultureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "森林計画学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -240,7 +240,7 @@ export const agricultureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "森林利用学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -249,7 +249,7 @@ export const agricultureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "木材物理学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 4,
 		period: 5,
 		credits: 2,
@@ -258,7 +258,7 @@ export const agricultureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "森林化学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 5,
 		period: 1,
 		credits: 2,
@@ -267,7 +267,7 @@ export const agricultureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "自然公園学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -276,7 +276,7 @@ export const agricultureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "緑化工学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -285,7 +285,7 @@ export const agricultureCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "森林政策学",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 3,
 		period: 4,
 		credits: 2,

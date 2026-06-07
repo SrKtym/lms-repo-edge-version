@@ -68,7 +68,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "人工知能",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 4,
 		period: 4,
 		credits: 2,
@@ -77,7 +77,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "機械学習",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 5,
 		period: 5,
 		credits: 2,
@@ -95,7 +95,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "コンピュータグラフィックス",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -104,7 +104,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "ヒューマンインターフェース",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -113,7 +113,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "分散システム",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 4,
 		period: 5,
 		credits: 2,
@@ -122,7 +122,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "理論計算機科学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 5,
 		period: 1,
 		credits: 2,
@@ -131,7 +131,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "情報セキュリティ",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -195,7 +195,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "生産加工学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -213,7 +213,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "機械振動学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 5,
 		period: 1,
 		credits: 2,
@@ -222,7 +222,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "熱機関工学",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -231,7 +231,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "流体機械",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -240,7 +240,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "ロボット工学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -249,7 +249,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "CAD/CAM",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 4,
 		period: 5,
 		credits: 2,
@@ -258,7 +258,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "精密加工学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 5,
 		period: 1,
 		credits: 2,
@@ -267,7 +267,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "メカトロニクス",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -276,7 +276,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "エネルギー変換工学",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -340,7 +340,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "電気材料学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 4,
 		period: 5,
 		credits: 2,
@@ -349,7 +349,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "高電圧工学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 5,
 		period: 1,
 		credits: 2,
@@ -367,7 +367,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "電力電子工学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -385,7 +385,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "信号処理",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 4,
 		period: 5,
 		credits: 2,
@@ -394,7 +394,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "電波工学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 5,
 		period: 1,
 		credits: 2,
@@ -403,7 +403,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "電気法規",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -412,7 +412,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "エネルギー工学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -421,7 +421,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "電気計測",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -476,7 +476,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "都市計画",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 4,
 		period: 5,
 		credits: 2,
@@ -494,7 +494,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "建築設備工学",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -503,7 +503,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "建築生産",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -512,7 +512,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "建築法規",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -521,7 +521,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "建築音響",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 4,
 		period: 5,
 		credits: 2,
@@ -530,7 +530,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "建築照明",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 5,
 		period: 1,
 		credits: 2,
@@ -539,7 +539,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "建築積算",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -548,7 +548,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "建築施工",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -557,7 +557,7 @@ export const engineeringCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "建築耐震",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 3,
 		period: 4,
 		credits: 2,

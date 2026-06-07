@@ -50,7 +50,7 @@ export const lawCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "民事訴訟法",
-		targetGrade: 3,
+		targetGrade: 2,
 		weekdays: 2,
 		period: 2,
 		credits: 2,
@@ -59,7 +59,7 @@ export const lawCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "刑事訴訟法",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 3,
 		period: 3,
 		credits: 2,
@@ -77,7 +77,7 @@ export const lawCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "国際法",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 5,
 		period: 5,
 		credits: 2,
@@ -86,7 +86,7 @@ export const lawCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "国際私法",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -104,7 +104,7 @@ export const lawCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "法制史",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -122,7 +122,7 @@ export const lawCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "比較法学",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 5,
 		period: 1,
 		credits: 2,
@@ -131,7 +131,7 @@ export const lawCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "法医学",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -186,7 +186,7 @@ export const lawCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "国際政治",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -204,7 +204,7 @@ export const lawCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "政治思想史",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 4,
 		period: 5,
 		credits: 2,
@@ -222,7 +222,7 @@ export const lawCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "政治過程論",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -231,7 +231,7 @@ export const lawCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "公共政策論",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -249,7 +249,7 @@ export const lawCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "選挙研究",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 4,
 		period: 5,
 		credits: 2,
@@ -267,7 +267,7 @@ export const lawCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "国際機構論",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -276,7 +276,7 @@ export const lawCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "安全保障論",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 2,
 		period: 3,
 		credits: 2,

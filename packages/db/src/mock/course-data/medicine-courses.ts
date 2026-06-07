@@ -68,7 +68,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "小児科学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 3,
 		period: 4,
 		credits: 3,
@@ -77,7 +77,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "産科婦人科学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 4,
 		period: 5,
 		credits: 3,
@@ -86,7 +86,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "精神医学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 5,
 		period: 1,
 		credits: 3,
@@ -95,7 +95,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "神経科学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 1,
 		period: 2,
 		credits: 3,
@@ -104,7 +104,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "皮膚科学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 2,
 		period: 3,
 		credits: 3,
@@ -113,7 +113,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "泌尿器科学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 3,
 		period: 4,
 		credits: 3,
@@ -122,7 +122,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "眼科学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 4,
 		period: 5,
 		credits: 3,
@@ -131,7 +131,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "耳鼻咽喉科学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 5,
 		period: 1,
 		credits: 3,
@@ -140,7 +140,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "放射線科学",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 1,
 		period: 2,
 		credits: 3,
@@ -186,7 +186,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "精神看護学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -195,7 +195,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "在宅看護論",
-		targetGrade: 3,
+		targetGrade: 2,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -204,7 +204,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "地域看護学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 4,
 		period: 5,
 		credits: 2,
@@ -213,7 +213,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "国際看護学",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 5,
 		period: 1,
 		credits: 2,
@@ -222,7 +222,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "看護管理学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -231,7 +231,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "看護研究法",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -240,7 +240,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "看護倫理",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -249,7 +249,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "看護情報学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 4,
 		period: 5,
 		credits: 2,
@@ -258,7 +258,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "緩和ケア看護",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 5,
 		period: 1,
 		credits: 2,
@@ -267,7 +267,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "リハビリ看護",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -276,7 +276,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "感染症看護",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -340,7 +340,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "精神保健学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 4,
 		period: 5,
 		credits: 2,
@@ -349,7 +349,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "学校保健",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 5,
 		period: 1,
 		credits: 2,
@@ -358,7 +358,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "産業保健",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -367,7 +367,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "老年保健",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -376,7 +376,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "母子保健",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -385,7 +385,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "国際保健",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 4,
 		period: 5,
 		credits: 2,
@@ -394,7 +394,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "保健医療行政",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 5,
 		period: 1,
 		credits: 2,
@@ -403,7 +403,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "健康行動科学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -412,7 +412,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "健康教育学",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -421,7 +421,7 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "保健福祉論",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 3,
 		period: 4,
 		credits: 2,
@@ -429,3 +429,4 @@ export const medicineCourses: Omit<Courses, CoursesOptional>[] = [
 		classRoom: "HL106",
 	},
 ];
+

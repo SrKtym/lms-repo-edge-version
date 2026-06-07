@@ -50,7 +50,7 @@ export const educationCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "比較教育学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 2,
 		period: 2,
 		credits: 2,
@@ -68,7 +68,7 @@ export const educationCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "教育史",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 4,
 		period: 4,
 		credits: 2,
@@ -86,7 +86,7 @@ export const educationCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "教育評価論",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 1,
 		period: 1,
 		credits: 2,
@@ -95,7 +95,7 @@ export const educationCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "教育財政論",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -104,7 +104,7 @@ export const educationCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "生涯学習論",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 4,
 		period: 5,
 		credits: 2,
@@ -113,7 +113,7 @@ export const educationCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "高等教育論",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 5,
 		period: 1,
 		credits: 2,
@@ -131,7 +131,7 @@ export const educationCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "特別支援教育",
-		targetGrade: 4,
+		targetGrade: 1,
 		weekdays: 1,
 		period: 2,
 		credits: 2,
@@ -140,7 +140,7 @@ export const educationCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "教育経営学",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 2,
 		period: 3,
 		credits: 2,

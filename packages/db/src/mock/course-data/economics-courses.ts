@@ -59,7 +59,7 @@ export const economicsCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "国際金融論",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 3,
 		period: 3,
 		credits: 2,
@@ -77,7 +77,7 @@ export const economicsCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "経済学史",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 5,
 		period: 5,
 		credits: 2,
@@ -95,7 +95,7 @@ export const economicsCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "文化経済学",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 2,
 		period: 3,
 		credits: 2,
@@ -122,7 +122,7 @@ export const economicsCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "金融論",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 5,
 		period: 1,
 		credits: 2,
@@ -186,7 +186,7 @@ export const economicsCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "中小企業論",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 3,
 		period: 3,
 		credits: 2,
@@ -213,7 +213,7 @@ export const economicsCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "戦略管理論",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 1,
 		period: 1,
 		credits: 1,
@@ -222,7 +222,7 @@ export const economicsCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "地方公企業論",
-		targetGrade: 4,
+		targetGrade: 2,
 		weekdays: 2,
 		period: 2,
 		credits: 2,
@@ -231,7 +231,7 @@ export const economicsCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "人的資源管理論ⅰ",
-		targetGrade: 3,
+		targetGrade: 2,
 		weekdays: 4,
 		period: 4,
 		credits: 2,
@@ -240,7 +240,7 @@ export const economicsCourses: Omit<Courses, CoursesOptional>[] = [
 	},
 	{
 		name: "人的資源管理論ⅱ",
-		targetGrade: 4,
+		targetGrade: 3,
 		weekdays: 5,
 		period: 5,
 		credits: 2,
