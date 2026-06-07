@@ -3,7 +3,6 @@ import { createDb } from "../../index";
 import {
 	courses,
 	departments,
-	faculties,
 	notifications,
 	registration,
 	students,
@@ -41,6 +40,22 @@ export async function registerCourses(courseId: string, userId: string) {
 
 			const { weekdays, period, credits } = targetCourse[0];
 
+			// ユーザーの学科情報を取得
+			const studentInfo = await tx
+				.select({
+					departmentId: students.departmentId,
+					grade: students.grade,
+				})
+				.from(students)
+				.where(eq(students.id, userId))
+				.limit(1);
+
+			if (!studentInfo[0]) {
+				return { message: "学生情報が見つかりません。", status: 404 };
+			}
+
+			const { departmentId, grade } = studentInfo[0];
+
 			// 1. 同じ曜日・時限に必修の講義があるか確認する
 			const requiredCourses = await tx
 				.select({
@@ -50,15 +65,14 @@ export async function registerCourses(courseId: string, userId: string) {
 				})
 				.from(courses)
 				.innerJoin(departments, eq(courses.departmentId, departments.id))
-				.innerJoin(faculties, eq(departments.facultyId, faculties.id))
-				.innerJoin(students, lte(courses.targetGrade, students.grade))
 				.where(
 					and(
 						eq(courses.weekdays, weekdays),
 						eq(courses.period, period),
 						eq(courses.requirements, "必修"),
+						lte(courses.targetGrade, grade),
 						or(
-							eq(departments.id, students.departmentId),
+							eq(departments.id, departmentId),
 							eq(departments.name, "全学科"),
 						),
 					),
@@ -114,14 +128,14 @@ export async function registerCourses(courseId: string, userId: string) {
 				})
 				.from(courses)
 				.innerJoin(registration, eq(courses.id, registration.courseId))
-				.where(eq(registration.userId, userId))
-				.limit(1);
+				.where(eq(registration.userId, userId));
 
-			const currentValue = total[0]?.totalCredits;
+			const currentValue = Number(total[0]?.totalCredits ?? 0);
+			const totalCredits = currentValue + credits;
 
-			if (currentValue && currentValue + credits >= 50) {
+			if (totalCredits >= 50) {
 				return {
-					message: "登録できる講義の単位数の上限に達しています。",
+					message: `登録できる講義の単位数の上限に達しています。（現在: ${currentValue}単位 + 登録予定: ${credits}単位）`,
 					status: 400,
 				};
 			}

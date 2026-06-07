@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { client } from "@/lib/hono-client";
-import { queryClient } from "@/lib/query-client";
+import { QUERY_CONFIG, queryClient } from "@/lib/query-client";
 import { fetchMembersByCourseIdQueryFn } from "@/utils/query-utils";
 
 // 講義を登録しているメンバーの取得
@@ -8,7 +8,7 @@ export const useMembersByCourseId = (courseId: string) => {
 	return useQuery({
 		queryKey: ["members-by-course-id", courseId],
 		queryFn: () => fetchMembersByCourseIdQueryFn(courseId),
-		staleTime: 24 * 60 * 60 * 1000, // 24 hours
+		...QUERY_CONFIG.STUDENT_DATA,
 	});
 };
 
@@ -23,7 +23,7 @@ export const useRegisterStudentData = () => {
 			return result;
 		},
 		onSettled: () => {
-			// Always refetch after error or success
+			// ミューテーションの成功時も失敗時も再フェッチする
 			queryClient.invalidateQueries({ queryKey: ["students"] });
 		},
 	});

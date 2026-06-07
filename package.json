@@ -24,6 +24,7 @@
 		"db:compose:logs": "docker-compose -f docker-compose.yml logs -f",
 		"db:compose:restart": "docker-compose -f docker-compose.yml restart",
 		"db:compose:ps": "docker-compose -f docker-compose.yml ps",
+		"dev:infra": "turbo -F @lms-repo-edge-version/infra dev",
 		"deploy": "turbo -F @lms-repo-edge-version/infra deploy",
 		"destroy": "turbo -F @lms-repo-edge-version/infra destroy",
 		"email:dev": "turbo -F @lms-repo-edge-version/emails email:dev",

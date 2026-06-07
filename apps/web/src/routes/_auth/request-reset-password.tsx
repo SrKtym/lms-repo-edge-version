@@ -32,8 +32,16 @@ function RouteComponent() {
 						redirectTo: `${env.VITE_CLIENT_URL}/reset-password`,
 					},
 					{
-						onError: () => {
-							setError("リセットメールの送信に失敗しました");
+						onError: ({ response }) => {
+							switch (response.status) {
+								case 429:
+									setError(
+										"リセットメールの送信試行回数が多すぎます。しばらくしてからもう一度お試しください。",
+									);
+									break;
+								default:
+									setError("リセットメールの送信に失敗しました");
+							}
 						},
 					},
 				);

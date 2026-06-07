@@ -9,6 +9,7 @@ import {
 } from "@lms-repo-edge-version/ui/components/dropdown-menus/nav-dropdown";
 import { DefaultSeparator } from "@lms-repo-edge-version/ui/components/separator";
 import { ThemeSwitch } from "@lms-repo-edge-version/ui/components/switch";
+import { toast } from "@lms-repo-edge-version/ui/components/toast";
 import { cn } from "@lms-repo-edge-version/ui/lib/utils";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 
@@ -16,15 +17,29 @@ export function Header({ email, name, image }: UserData) {
 	const location = useLocation();
 	const navigate = useNavigate();
 
-	// TODO: ログアウト処理
+	// トースト表示
+	function showToast(error: { status: number }) {
+		switch (error.status) {
+			case 400:
+			case 404:
+				toast.danger("ログアウトに失敗しました");
+				break;
+			case 500:
+				toast.danger(
+					"予期しないエラーが発生しました。お手数ですが再度試行してください。",
+				);
+		}
+	}
+
+	// ログアウト処理
 	const handleLogout = async () => {
 		await authClient.signOut({
 			fetchOptions: {
 				onSuccess: () => {
 					navigate({ to: "/" });
 				},
-				onError: (error) => {
-					console.error("Logout failed:", error);
+				onError: ({ error }) => {
+					showToast(error);
 				},
 			},
 		});

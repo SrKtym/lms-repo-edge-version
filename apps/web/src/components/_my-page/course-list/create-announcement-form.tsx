@@ -1,21 +1,28 @@
 import { announcementType } from "@lms-repo-edge-version/db/schema/service";
-import { MessagesSquare } from "@lms-repo-edge-version/ui/assets/icons/messages-square";
 import {
 	CancelButton,
 	DefaultButton,
 } from "@lms-repo-edge-version/ui/components/button";
 import { InputForForm } from "@lms-repo-edge-version/ui/components/input";
-import { DefaultModal } from "@lms-repo-edge-version/ui/components/modals/default-modal";
+import { ControlledModal } from "@lms-repo-edge-version/ui/components/modals/controlled-modal";
 import { useForm } from "@tanstack/react-form";
 import { useSearch } from "@tanstack/react-router";
 import { z } from "zod";
 import { useCreateAnnouncement } from "@/hooks/announcements";
 
-export function CreateAnnouncementForm() {
+interface CreateAnnouncementFormProps {
+	isOpen: boolean;
+	onOpenChange: (open: boolean) => void;
+}
+
+export function CreateAnnouncementForm({
+	isOpen,
+	onOpenChange,
+}: CreateAnnouncementFormProps) {
 	const { "course-id": courseId } = useSearch({
 		from: "/_my-page/course-list",
 	});
-	const { mutate: createAnnouncement } = useCreateAnnouncement();
+	const { mutateAsync: createAnnouncement } = useCreateAnnouncement();
 	const form = useForm({
 		defaultValues: {
 			title: "",
@@ -24,7 +31,12 @@ export function CreateAnnouncementForm() {
 			courseId: courseId || "",
 		},
 		onSubmit: async ({ value }) => {
-			createAnnouncement(value);
+			const res = await createAnnouncement(value);
+			if (res.status === 201) {
+				onOpenChange(false);
+			} else {
+				return;
+			}
 		},
 		validators: {
 			onSubmit: z.object({
@@ -37,13 +49,9 @@ export function CreateAnnouncementForm() {
 	});
 
 	return (
-		<DefaultModal
-			triggerButton={
-				<DefaultButton>
-					<MessagesSquare />
-					お知らせを作成
-				</DefaultButton>
-			}
+		<ControlledModal
+			isOpen={isOpen}
+			onOpenChange={onOpenChange}
 			heading="お知らせの作成"
 		>
 			<form
@@ -162,12 +170,13 @@ export function CreateAnnouncementForm() {
 				</form.Field>
 
 				<div className="flex justify-end gap-2">
-					<CancelButton slot="close">キャンセル</CancelButton>
+					<CancelButton onClick={() => onOpenChange(false)}>
+						キャンセル
+					</CancelButton>
 					<form.Subscribe>
 						{({ canSubmit, isSubmitting }) => (
 							<DefaultButton
 								type="submit"
-								slot="close"
 								isDisabled={!canSubmit || isSubmitting}
 							>
 								{isSubmitting ? "処理中..." : "作成"}
@@ -176,6 +185,6 @@ export function CreateAnnouncementForm() {
 					</form.Subscribe>
 				</div>
 			</form>
-		</DefaultModal>
+		</ControlledModal>
 	);
 }

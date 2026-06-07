@@ -33,6 +33,21 @@ This project uses PostgreSQL with Drizzle ORM.
 
 3. Apply the schema to your database:
 
+## R2 Storage Setup
+
+This project uses Cloudflare R2 for file storage. For production deployment with signed URLs:
+
+1. Generate R2 API Token in Cloudflare Dashboard:
+   - Go to R2 > Manage R2 API Tokens
+   - Create a new token with permissions for your bucket
+
+2. Add the following environment variables to Alchemy:
+   - `R2_ACCESS_KEY_ID`: Your R2 Access Key ID
+   - `R2_SECRET_ACCESS_KEY`: Your R2 Secret Access Key
+   - `R2_ACCOUNT_ID`: Your Cloudflare Account ID
+
+Note: For local development, the direct upload endpoint is used instead of signed URLs.
+
 ```bash
 pnpm run db:push
 ```
@@ -40,8 +55,10 @@ pnpm run db:push
 Then, run the development server:
 
 ```bash
-pnpm run dev
+pnpm run dev:infra
 ```
+
+This starts Alchemy's local development mode with R2 bucket emulation for file uploads.
 
 Open [http://localhost:5173](http://localhost:5173) in your browser to see the web application.
 The API is running at [http://localhost:3000](http://localhost:3000).

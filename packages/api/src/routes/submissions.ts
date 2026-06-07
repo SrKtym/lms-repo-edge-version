@@ -1,11 +1,12 @@
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { zValidator } from "@hono/zod-validator";
 import type { Session } from "@lms-repo-edge-version/auth/server";
-import { createDb } from "@lms-repo-edge-version/db";
-import { submissionStatus } from "@lms-repo-edge-version/db/schema/service";
 import type { TextSubmissions } from "@lms-repo-edge-version/db/types";
 import {
 	createFileSubmissionMetadata,
 	createTextSubmission,
+	updateSubmissionStatus,
 } from "@lms-repo-edge-version/db/utils/mutation/submissions";
 import {
 	fetchSubmissionById,
@@ -15,12 +16,89 @@ import { env } from "@lms-repo-edge-version/env/server";
 import { Hono } from "hono";
 import { z } from "zod";
 
+// ファイルアップロードの制限
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_FILE_COUNT = 5;
+const ALLOWED_MIME_TYPES = [
+	"application/pdf",
+	"application/msword",
+	"application/vnd.ms-excel",
+	"application/vnd.ms-powerpoint",
+	"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+	"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+	"application/vnd.openxmlformats-officedocument.presentationml.presentation",
+];
+
 export const submissionsRoute = new Hono<{
 	Variables: {
 		user: Session["user"];
 		session: Session["session"];
 	};
 }>()
+	// 署名付きURL生成エンドポイント
+	.post(
+		"/signed_urls",
+		zValidator(
+			"json",
+			z.array(
+				z.object({
+					fileName: z.string(),
+					fileType: z.string(),
+				}),
+			),
+		),
+		async (c) => {
+			const files = c.req.valid("json");
+
+			// R2 API credentialsが設定されているか確認
+			if (
+				!env.R2_ACCESS_KEY_ID ||
+				!env.R2_SECRET_ACCESS_KEY ||
+				!env.R2_ACCOUNT_ID
+			) {
+				return c.json(
+					{
+						error: "R2 API credentials are not configured",
+					},
+					500,
+				);
+			}
+
+			// S3クライアントを初期化
+			const s3Client = new S3Client({
+				region: "auto",
+				endpoint: `https://${env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+				credentials: {
+					accessKeyId: env.R2_ACCESS_KEY_ID,
+					secretAccessKey: env.R2_SECRET_ACCESS_KEY,
+				},
+			});
+
+			// 署名付きURLを一括生成
+			const signedUrls = await Promise.all(
+				files.map(async (file) => {
+					const key = `uploads/${file.fileName}`;
+					const command = new PutObjectCommand({
+						Bucket: "storage",
+						Key: key,
+						ContentType: file.fileType,
+					});
+
+					const signedUrl = await getSignedUrl(s3Client, command, {
+						expiresIn: 3600, // 1時間有効
+					});
+
+					return {
+						fileName: file.fileName,
+						signedUrl,
+						objectName: key,
+					};
+				}),
+			);
+
+			return c.json(signedUrls);
+		},
+	)
 	// 直接アップロードエンドポイント
 	.post("/upload", async (c) => {
 		const formData = await c.req.formData();
@@ -53,20 +131,43 @@ export const submissionsRoute = new Hono<{
 		zValidator(
 			"json",
 			z.object({
-				metadataList: z.array(
-					z.object({
-						objectName: z.string(),
-						originalName: z.string(),
-						mimeType: z.string(),
-						fileSize: z.number(),
-					}),
-				),
+				metadataList: z
+					.array(
+						z.object({
+							objectName: z.string(),
+							originalName: z.string(),
+							mimeType: z.string(),
+							fileSize: z
+								.number()
+								.max(
+									MAX_FILE_SIZE,
+									"ファイルサイズは10MB以下である必要があります",
+								),
+						}),
+					)
+					.max(
+						MAX_FILE_COUNT,
+						`一度にアップロードできるファイルは${MAX_FILE_COUNT}個までです`,
+					),
 				assignmentId: z.string(),
 			}),
 		),
 		async (c) => {
 			const { userId } = c.get("session");
 			const { metadataList, assignmentId } = c.req.valid("json");
+
+			// MIMEタイプの検証
+			for (const metadata of metadataList) {
+				if (!ALLOWED_MIME_TYPES.includes(metadata.mimeType)) {
+					return c.json(
+						{
+							error: `許可されていないファイルタイプです: ${metadata.mimeType}`,
+							allowedTypes: ALLOWED_MIME_TYPES,
+						},
+						400,
+					);
+				}
+			}
 
 			// メタデータを一括保存
 			const results = await Promise.all(
@@ -81,17 +182,14 @@ export const submissionsRoute = new Hono<{
 			);
 
 			// 提出状況を更新
-			await createDb()
-				.insert(submissionStatus)
-				.values({
-					userId,
-					assignmentId,
-					status: "提出済み",
-				})
-				.onConflictDoUpdate({
-					target: [submissionStatus.userId, submissionStatus.assignmentId],
-					set: { status: "提出済み" },
-				});
+			const updateResult = await updateSubmissionStatus(
+				assignmentId,
+				userId,
+				"提出済み",
+			);
+			if (updateResult.status !== 200) {
+				return c.json(updateResult);
+			}
 
 			return c.json({ successCount: results.length, results }, 201);
 		},

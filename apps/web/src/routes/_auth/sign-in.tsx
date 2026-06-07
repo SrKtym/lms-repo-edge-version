@@ -58,8 +58,16 @@ function RouteComponent() {
 								to: "/dashboard",
 							});
 						},
-						onError: () => {
-							setError("メールアドレスまたはパスワードが正しくありません");
+						onError: ({ response }) => {
+							switch (response.status) {
+								case 429:
+									setError(
+										"ログイン試行回数が多すぎます。しばらくしてからもう一度お試しください。",
+									);
+									break;
+								default:
+									setError("メールアドレスまたはパスワードが正しくありません");
+							}
 						},
 					},
 				);

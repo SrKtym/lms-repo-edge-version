@@ -16,7 +16,6 @@ export interface Schedule {
 	startTime: string | Date;
 	endTime: string | Date;
 	theme: string;
-	createdBy: string;
 }
 
 export interface Event {

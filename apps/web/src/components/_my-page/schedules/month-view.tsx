@@ -1,8 +1,15 @@
 import { ArrowLeft } from "@lms-repo-edge-version/ui/assets/icons/arrow-left";
 import { ArrowRight } from "@lms-repo-edge-version/ui/assets/icons/arrow-right";
+import { MenuButton } from "@lms-repo-edge-version/ui/components/button";
 import { LazyMotionProvider } from "@lms-repo-edge-version/ui/components/lazymotion-provider";
+import {
+	LongPressPopover,
+	useLongPress,
+} from "@lms-repo-edge-version/ui/components/popover";
+import { useIsHoverCapable } from "@lms-repo-edge-version/ui/hooks/use-is-hover-capable";
 import { DAYS } from "@lms-repo-edge-version/ui/lib/utils";
 import * as m from "motion/react-m";
+import { useState } from "react";
 import type { Event } from "@/hooks/use-course-events";
 
 interface MonthDay {
@@ -16,6 +23,51 @@ interface MonthViewProps {
 	calendar: MonthDay[][];
 	changeMonth: (direction: number) => void;
 	getEventsForDay: (date: Date) => Event[];
+	deleteSchedule: (scheduleId: string) => void;
+	editSchedule?: (scheduleId: string) => void;
+}
+
+interface EventItemProps {
+	event: Event;
+	index: number;
+	deleteSchedule: (scheduleId: string) => void;
+	editSchedule?: (scheduleId: string) => void;
+	onLongPress: (event: Event, position: { x: number; y: number }) => void;
+}
+
+function EventItem({
+	event,
+	index,
+	deleteSchedule,
+	editSchedule,
+	onLongPress,
+}: EventItemProps) {
+	const isHoverCapable = useIsHoverCapable();
+	const { handlers } = useLongPress((position) => onLongPress(event, position));
+
+	return (
+		<m.div
+			key={event.id}
+			initial={{ opacity: 0, x: -10 }}
+			animate={{ opacity: 1, x: 0 }}
+			transition={{ delay: index * 0.05 }}
+			className="group relative truncate rounded p-1 text-white text-xs"
+			style={{ backgroundColor: event.theme }}
+			whileHover={{ scale: 1.05 }}
+			whileTap={!isHoverCapable ? { scale: 0.9 } : undefined}
+			{...handlers}
+		>
+			{event.title}
+			{event.type === "schedule" && (
+				<div className="absolute top-0 right-0 opacity-0 transition-opacity group-hover:opacity-100">
+					<MenuButton
+						onEdit={() => editSchedule?.(event.id)}
+						onDelete={() => deleteSchedule(event.id)}
+					/>
+				</div>
+			)}
+		</m.div>
+	);
 }
 
 function getMonthRange(date: Date) {
@@ -29,8 +81,31 @@ export function MonthView({
 	calendar,
 	changeMonth,
 	getEventsForDay,
+	deleteSchedule,
+	editSchedule,
 }: MonthViewProps) {
 	const { firstDay } = getMonthRange(currentDate);
+	const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+	const [menuPosition, setMenuPosition] = useState<{
+		x: number;
+		y: number;
+	} | null>(null);
+
+	// 長押し処理
+	const handleLongPress = (
+		event: Event,
+		position: { x: number; y: number },
+	) => {
+		if (event.type === "schedule") {
+			setSelectedEvent(event);
+			setMenuPosition(position);
+		}
+	};
+
+	const closeMenu = () => {
+		setSelectedEvent(null);
+		setMenuPosition(null);
+	};
 
 	return (
 		<LazyMotionProvider>
@@ -118,17 +193,14 @@ export function MonthView({
 
 									<div className="space-y-1">
 										{events.slice(0, 3).map((event, index) => (
-											<m.div
+											<EventItem
 												key={event.id}
-												initial={{ opacity: 0, x: -10 }}
-												animate={{ opacity: 1, x: 0 }}
-												transition={{ delay: index * 0.05 }}
-												className={"truncate rounded p-1 text-white text-xs"}
-												style={{ backgroundColor: event.theme }}
-												whileHover={{ scale: 1.05 }}
-											>
-												{event.title}
-											</m.div>
+												event={event}
+												index={index}
+												deleteSchedule={deleteSchedule}
+												editSchedule={editSchedule}
+												onLongPress={handleLongPress}
+											/>
 										))}
 										{events.length > 3 && (
 											<div className="text-gray-500 text-xs dark:text-gray-400">
@@ -141,6 +213,24 @@ export function MonthView({
 						}),
 					)}
 				</div>
+
+				{/* 長押しメニュー */}
+				{selectedEvent && menuPosition && (
+					<LongPressPopover
+						position={menuPosition}
+						onEdit={() => {
+							if (editSchedule && selectedEvent.type === "schedule") {
+								editSchedule(selectedEvent.id);
+							}
+						}}
+						onDelete={() => {
+							if (selectedEvent.type === "schedule") {
+								deleteSchedule(selectedEvent.id);
+							}
+						}}
+						onClose={closeMenu}
+					/>
+				)}
 			</div>
 		</LazyMotionProvider>
 	);

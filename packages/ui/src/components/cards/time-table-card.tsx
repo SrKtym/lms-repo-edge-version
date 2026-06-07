@@ -2,15 +2,16 @@ import type {
 	FetchCoursesReturnType,
 	FetchRegisteredCoursesReturnType,
 } from "@lms-repo-edge-version/db/utils/query/courses";
-import { Edit } from "@lms-repo-edge-version/ui/assets/icons/edit";
 import { Plus } from "@lms-repo-edge-version/ui/assets/icons/plus";
-import { Trash } from "@lms-repo-edge-version/ui/assets/icons/trash";
+import { MenuButton } from "@lms-repo-edge-version/ui/components/button";
+import { useIsHoverCapable } from "@lms-repo-edge-version/ui/hooks/use-is-hover-capable";
 import { AnimatePresence } from "motion/react";
 import * as m from "motion/react-m";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { DAYS, getColorbyRequirements } from "../../lib/utils";
 import { OutlineButton } from "../button";
 import { CourseSelectionModal } from "../modals/course-selection-modal";
+import { LongPressMenu, useLongPress } from "../popover";
 import { BaseCard } from "./base-card";
 
 interface TimeTableCardProps {
@@ -23,6 +24,72 @@ interface TimeTableCardProps {
 	hasNextPage?: boolean;
 	fetchNextPage?: () => void;
 	isFetchingNextPage?: boolean;
+}
+
+interface CourseCellProps {
+	course: FetchRegisteredCoursesReturnType[number];
+	day: number;
+	period: number;
+	onCellClick: (day: number, period: number) => void;
+	onDeleteCourse: (courseId: string) => void;
+	setCurrentCell: (cell: { day: number; period: number }) => void;
+	setLongPressMenu: (
+		menu: {
+			position: { x: number; y: number };
+			day: number;
+			period: number;
+		} | null,
+	) => void;
+	isHoverCapable: boolean;
+}
+
+function CourseCell({
+	course,
+	day,
+	period,
+	onCellClick,
+	onDeleteCourse,
+	setCurrentCell,
+	setLongPressMenu,
+	isHoverCapable,
+}: CourseCellProps) {
+	const { handlers } = useLongPress((position) => {
+		setLongPressMenu({ position, day, period });
+	});
+
+	return (
+		<m.div
+			initial={{ opacity: 0, scale: 0.8 }}
+			animate={{ opacity: 1, scale: 1 }}
+			exit={{ opacity: 0, scale: 0.8 }}
+			transition={{ duration: 0.2 }}
+			className={`${getColorbyRequirements(course.requirements)} group relative h-full rounded border p-2 text-xs hover:shadow-md`}
+			whileTap={!isHoverCapable ? { scale: 0.95 } : undefined}
+			onContextMenu={(e) => {
+				e.preventDefault();
+				onCellClick(day, period);
+			}}
+			{...handlers}
+		>
+			<div className="truncate font-semibold text-xs">{course.name}</div>
+			<div className="mt-1 truncate text-gray-600 dark:text-gray-300">
+				{course.professor}
+			</div>
+			<div className="mt-1 text-gray-500 dark:text-gray-400">
+				{course.credits}単位
+			</div>
+			{/* メニューボタン */}
+			<div className="absolute top-1 right-1 opacity-0 transition-opacity group-hover:opacity-100">
+				<MenuButton
+					onEdit={() => {
+						onCellClick(day, period);
+						setCurrentCell({ day, period });
+					}}
+					onDelete={() => onDeleteCourse(course.id)}
+				/>
+			</div>
+		</m.div>
+	);
 }
 
 export function TimeTableCard({
@@ -50,16 +117,20 @@ export function TimeTableCard({
 	const uniqueDays = [...new Set(timeSlots.map((slot) => slot.day))];
 	const uniquePeriods = [...new Set(timeSlots.map((slot) => slot.period))];
 
-	const [hasHover, setHasHover] = useState<boolean>(false);
-	const [openPopover, setOpenPopover] = useState<Record<string, boolean>>({
-		"": false,
-	});
+	const isHoverCapable = useIsHoverCapable();
 
-	// メディアクエリで hover の可否を判定
-	useEffect(() => {
-		const mql = window.matchMedia("(hover: hover)");
-		setHasHover(mql.matches);
-	}, []);
+	// 現在選択中のセル
+	const [currentCell, setCurrentCell] = useState<{
+		day: number;
+		period: number;
+	} | null>(null);
+
+	// 長押しメニューの状態
+	const [longPressMenu, setLongPressMenu] = useState<{
+		position: { x: number; y: number };
+		day: number;
+		period: number;
+	} | null>(null);
 
 	return (
 		<BaseCard className="p-6">
@@ -108,132 +179,27 @@ export function TimeTableCard({
 										>
 											<AnimatePresence mode="wait">
 												{targetSlot?.course ? (
-													<m.div
+													<CourseCell
 														key={targetSlot.course.id}
-														initial={{ opacity: 0, scale: 0.8 }}
-														animate={{ opacity: 1, scale: 1 }}
-														exit={{ opacity: 0, scale: 0.8 }}
-														transition={{ duration: 0.2 }}
-														className={`${getColorbyRequirements(targetSlot.course.requirements)} group relative h-full rounded border p-2 text-xs hover:shadow-md`}
-														onClick={() =>
-															setOpenPopover((prev) => ({
-																[targetSlot?.course?.id || ""]:
-																	!prev[targetSlot?.course?.id || ""],
-															}))
-														}
-													>
-														<div className="truncate font-semibold text-xs">
-															{targetSlot.course.name}
-														</div>
-														<div className="mt-1 truncate text-gray-600 dark:text-gray-300">
-															{targetSlot.course.professor}
-														</div>
-														<div className="mt-1 text-gray-500 dark:text-gray-400">
-															{targetSlot.course.credits}単位
-														</div>
-														{/* タッチデバイスでない場合は表示しない */}
-														{hasHover && (
-															<div className="absolute top-1 right-1 opacity-0 transition-opacity group-hover:opacity-100">
-																<div className="flex gap-1">
-																	<CourseSelectionModal
-																		triggerButton={
-																			<OutlineButton
-																				className="rounded-full bg-blue-500 text-white"
-																				size="sm"
-																				onPress={() => onCellClick(day, period)}
-																			>
-																				<Edit width={10} height={10} />
-																			</OutlineButton>
-																		}
-																		onCourseSelect={(course) =>
-																			onCourseSelect(course.id)
-																		}
-																		selectedCell={{ day, period }}
-																		availableCourses={availableCourses}
-																		isPending={isPending}
-																		hasNextPage={hasNextPage}
-																		fetchNextPage={fetchNextPage}
-																		isFetchingNextPage={isFetchingNextPage}
-																	/>
-																	<OutlineButton
-																		className="rounded-full bg-red-500 text-white hover:bg-red-600"
-																		size="sm"
-																		onPress={() =>
-																			targetSlot.course &&
-																			onDeleteCourse(targetSlot.course.id)
-																		}
-																	>
-																		<Trash width={12} height={12} />
-																	</OutlineButton>
-																</div>
-															</div>
-														)}
-														{/* タッチデバイスの場合に表示 */}
-														{!hasHover &&
-															targetSlot.course.id in openPopover && (
-																<m.div
-																	initial={{ opacity: 0 }}
-																	animate={{ opacity: 1 }}
-																	transition={{ duration: 0.2 }}
-																	className="absolute top-1 right-1"
-																>
-																	<div className="flex gap-1">
-																		<CourseSelectionModal
-																			triggerButton={
-																				<OutlineButton
-																					className="rounded-full bg-blue-500 text-white"
-																					size="sm"
-																					onPress={() =>
-																						onCellClick(day, period)
-																					}
-																				>
-																					<Edit width={10} height={10} />
-																				</OutlineButton>
-																			}
-																			onCourseSelect={(course) =>
-																				onCourseSelect(course.id)
-																			}
-																			selectedCell={{ day, period }}
-																			availableCourses={availableCourses}
-																			isPending={isPending}
-																			hasNextPage={hasNextPage}
-																			fetchNextPage={fetchNextPage}
-																			isFetchingNextPage={isFetchingNextPage}
-																		/>
-																		<OutlineButton
-																			className="rounded-full bg-red-500 text-white"
-																			size="sm"
-																			onPress={() =>
-																				targetSlot.course &&
-																				onDeleteCourse(targetSlot.course.id)
-																			}
-																		>
-																			<Trash width={12} height={12} />
-																		</OutlineButton>
-																	</div>
-																</m.div>
-															)}
-													</m.div>
-												) : (
-													<CourseSelectionModal
-														triggerButton={
-															<OutlineButton
-																className="h-full rounded-lg"
-																onPress={() => onCellClick(day, period)}
-															>
-																<Plus />
-															</OutlineButton>
-														}
-														onCourseSelect={(course) =>
-															onCourseSelect(course.id)
-														}
-														selectedCell={{ day, period }}
-														availableCourses={availableCourses}
-														isPending={isPending}
-														hasNextPage={hasNextPage}
-														fetchNextPage={fetchNextPage}
-														isFetchingNextPage={isFetchingNextPage}
+														course={targetSlot.course}
+														day={day}
+														period={period}
+														onCellClick={onCellClick}
+														onDeleteCourse={onDeleteCourse}
+														setCurrentCell={setCurrentCell}
+														setLongPressMenu={setLongPressMenu}
+														isHoverCapable={isHoverCapable}
 													/>
+												) : (
+													<OutlineButton
+														className="h-full rounded-lg"
+														onPress={() => {
+															onCellClick(day, period);
+															setCurrentCell({ day, period });
+														}}
+													>
+														<Plus />
+													</OutlineButton>
 												)}
 											</AnimatePresence>
 										</m.td>
@@ -281,6 +247,51 @@ export function TimeTableCard({
 					</AnimatePresence>
 				</div>
 			</m.div>
+
+			{/* 編集モーダル */}
+			<CourseSelectionModal
+				isOpen={!!currentCell}
+				onOpenChange={(open) => !open && setCurrentCell(null)}
+				onCourseSelect={(course) => {
+					onCourseSelect(course.id);
+					setCurrentCell(null);
+				}}
+				selectedCell={currentCell || { day: 1, period: 1 }}
+				availableCourses={availableCourses}
+				isPending={isPending}
+				hasNextPage={hasNextPage}
+				fetchNextPage={fetchNextPage}
+				isFetchingNextPage={isFetchingNextPage}
+			/>
+
+			{/* 長押しメニュー */}
+			<AnimatePresence>
+				{longPressMenu && (
+					<LongPressMenu
+						position={longPressMenu.position}
+						onEdit={() => {
+							onCellClick(longPressMenu.day, longPressMenu.period);
+							setCurrentCell({
+								day: longPressMenu.day,
+								period: longPressMenu.period,
+							});
+							setLongPressMenu(null);
+						}}
+						onDelete={() => {
+							const targetSlot = timeSlots.find(
+								(s) =>
+									s.day === longPressMenu.day &&
+									s.period === longPressMenu.period,
+							);
+							if (targetSlot?.course) {
+								onDeleteCourse(targetSlot.course.id);
+							}
+							setLongPressMenu(null);
+						}}
+						onClose={() => setLongPressMenu(null)}
+					/>
+				)}
+			</AnimatePresence>
 		</BaseCard>
 	);
 }

@@ -28,7 +28,17 @@ export default function ResetPassword({ token }: { token: string }) {
 						newPassword: value.password,
 					},
 					{
-						onError: () => setError("パスワードのリセットに失敗しました"),
+						onError: ({ response }) => {
+							switch (response.status) {
+								case 429:
+									setError(
+										"パスワードのリセット試行回数が多すぎます。しばらくしてからもう一度お試しください。",
+									);
+									break;
+								default:
+									setError("パスワードのリセットに失敗しました");
+							}
+						},
 					},
 				);
 

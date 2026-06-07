@@ -2,8 +2,8 @@ import { Dropdown } from "@heroui/react";
 import type React from "react";
 import { useState } from "react";
 import type { LinkComponentProps } from "../../lib/utils";
-import { DropdownButton } from "../button";
-import { LogoutModal } from "../modals/logout-modal";
+import { CancelButton, DefaultButton, DropdownButton } from "../button";
+import { ControlledModal } from "../modals/controlled-modal";
 
 interface DropdownMenuForAccountProps {
 	children: React.ReactNode;
@@ -50,6 +50,8 @@ export function DropdownMenuForAccount({
 												{label}
 											</Dropdown.Item>
 										);
+									default:
+										return null;
 								}
 							})}
 						</Dropdown.Section>
@@ -58,11 +60,22 @@ export function DropdownMenuForAccount({
 			</Dropdown>
 
 			{isModalOpen && (
-				<LogoutModal
+				<ControlledModal
 					isOpen={isModalOpen}
 					onOpenChange={setIsModalOpen}
-					onLogout={onLogout}
-				/>
+					heading="ログアウトの確認"
+					size="lg"
+					footer={
+						<>
+							<CancelButton onPress={() => setIsModalOpen(false)}>
+								キャンセル
+							</CancelButton>
+							<DefaultButton onPress={onLogout}>ログアウト</DefaultButton>
+						</>
+					}
+				>
+					<p className="text-foreground">ログアウトしますか？</p>
+				</ControlledModal>
 			)}
 		</>
 	);

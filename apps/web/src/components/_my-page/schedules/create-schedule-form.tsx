@@ -1,15 +1,12 @@
-import type {
-	Schedules,
-	SchedulesOptional,
-} from "@lms-repo-edge-version/db/types";
-import { CalendarClock } from "@lms-repo-edge-version/ui/assets/icons/calendar-clock";
+import type { Schedules } from "@lms-repo-edge-version/db/types";
+import type { FetchSchedulesReturnType } from "@lms-repo-edge-version/db/utils/query/schedules";
 import {
 	CancelButton,
 	DefaultButton,
 } from "@lms-repo-edge-version/ui/components/button";
 import { ColorSwatchPicker } from "@lms-repo-edge-version/ui/components/color-swatch-picker";
 import { InputForForm } from "@lms-repo-edge-version/ui/components/input";
-import { DefaultModal } from "@lms-repo-edge-version/ui/components/modals/default-modal";
+import { ControlledModal } from "@lms-repo-edge-version/ui/components/modals/controlled-modal";
 import {
 	getLocalTimeZone,
 	now,
@@ -19,29 +16,68 @@ import { useForm } from "@tanstack/react-form";
 import { z } from "zod";
 import { useCreateSchedule } from "@/hooks/schedules";
 
-export function CreateScheduleForm() {
+interface CreateScheduleFormProps {
+	initialData?: FetchSchedulesReturnType[number];
+	isOpen: boolean;
+	onOpenChange: (open: boolean) => void;
+}
+
+export function CreateScheduleForm({
+	initialData,
+	isOpen,
+	onOpenChange,
+}: CreateScheduleFormProps) {
 	const dateTime = now(getLocalTimeZone());
-	const createSchedule = useCreateSchedule();
+	const { mutateAsync: createSchedule } = useCreateSchedule();
+	const isEditMode = !!initialData;
+
 	const form = useForm({
 		defaultValues: {
-			title: "",
-			description: "",
-			timeSpan: { start: dateTime, end: dateTime },
-			theme: "#059669",
+			id: initialData?.id || "",
+			title: initialData?.title || "",
+			description: initialData?.description || "",
+			timeSpan: {
+				start: initialData
+					? dateTime.set({
+							year: initialData.startTime.getFullYear(),
+							month: initialData.startTime.getMonth() + 1,
+							day: initialData.startTime.getDate(),
+							hour: initialData.startTime.getHours(),
+							minute: initialData.startTime.getMinutes(),
+						})
+					: dateTime,
+				end: initialData
+					? dateTime.set({
+							year: initialData.endTime.getFullYear(),
+							month: initialData.endTime.getMonth() + 1,
+							day: initialData.endTime.getDate(),
+							hour: initialData.endTime.getHours(),
+							minute: initialData.endTime.getMinutes(),
+						})
+					: dateTime,
+			},
+			theme: initialData?.theme || "#059669",
 		},
 		onSubmit: async ({ value }) => {
 			const { timeSpan, ...rest } = value;
 
-			const scheduleData: Omit<Schedules, SchedulesOptional> = {
+			const scheduleData: Omit<Schedules, "createdBy"> = {
 				...rest,
 				startTime: timeSpan.start.toDate(),
 				endTime: timeSpan.end.toDate(),
 			};
 
-			createSchedule.mutate(scheduleData);
+			const res = await createSchedule(scheduleData);
+
+			if (res.status === 200) {
+				onOpenChange(false);
+			} else {
+				return;
+			}
 		},
 		validators: {
 			onSubmit: z.object({
+				id: z.string(),
 				title: z.string(),
 				description: z.string(),
 				timeSpan: z.object({
@@ -54,14 +90,10 @@ export function CreateScheduleForm() {
 	});
 
 	return (
-		<DefaultModal
-			triggerButton={
-				<DefaultButton>
-					<CalendarClock />
-					スケジュールを追加
-				</DefaultButton>
-			}
-			heading="スケジュールの追加"
+		<ControlledModal
+			isOpen={isOpen}
+			onOpenChange={onOpenChange}
+			heading={isEditMode ? "スケジュールの編集" : "スケジュールの追加"}
 		>
 			<form
 				onSubmit={(e) => {
@@ -125,6 +157,7 @@ export function CreateScheduleForm() {
 						</div>
 					)}
 				</form.Field>
+
 				<form.Field name="timeSpan">
 					{(field) => (
 						<div className="space-y-2">
@@ -156,6 +189,7 @@ export function CreateScheduleForm() {
 						</div>
 					)}
 				</form.Field>
+
 				<form.Field name="theme">
 					{(field) => (
 						<div className="space-y-2">
@@ -171,21 +205,37 @@ export function CreateScheduleForm() {
 						</div>
 					)}
 				</form.Field>
+
+				<form.Field name="id">
+					{(field) => (
+						<input
+							type="hidden"
+							name="id"
+							value={field.state.value}
+							onChange={(e) => {
+								console.log(e.target.value);
+								field.handleChange(e.target.value);
+							}}
+						/>
+					)}
+				</form.Field>
+
 				<div className="flex justify-end gap-2">
-					<CancelButton slot="close">キャンセル</CancelButton>
+					<CancelButton onPress={() => onOpenChange(false)}>
+						キャンセル
+					</CancelButton>
 					<form.Subscribe>
 						{({ canSubmit, isSubmitting }) => (
 							<DefaultButton
 								type="submit"
-								slot="close"
 								isDisabled={!canSubmit || isSubmitting}
 							>
-								{isSubmitting ? "処理中..." : "作成"}
+								{isSubmitting ? "処理中..." : isEditMode ? "更新" : "作成"}
 							</DefaultButton>
 						)}
 					</form.Subscribe>
 				</div>
 			</form>
-		</DefaultModal>
+		</ControlledModal>
 	);
 }

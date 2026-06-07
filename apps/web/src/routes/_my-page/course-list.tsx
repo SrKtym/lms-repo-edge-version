@@ -3,7 +3,7 @@ import { z } from "zod";
 import RegisteredCourseContents from "@/components/_my-page/course-list/registered-course-contents";
 import RegisteredCourseInfos from "@/components/_my-page/course-list/registered-course-infos";
 import RegisteredCourseList from "@/components/_my-page/course-list/registered-course-list";
-import { queryClient } from "@/lib/query-client";
+import { QUERY_CONFIG, queryClient } from "@/lib/query-client";
 import {
 	fetchAnnouncementsQueryFn,
 	fetchAssignmentsQueryFn,
@@ -29,23 +29,19 @@ export const Route = createFileRoute("/_my-page/course-list")({
 				queryClient.ensureQueryData({
 					queryKey: ["registered-courses"],
 					queryFn: fetchRegisteredCoursesQueryFn,
-					staleTime: 1000 * 60 * 60 * 24, // 24時間は「新鮮」と見なす
-					gcTime: 1000 * 60 * 60 * 24 * 7, // 7日間はキャッシュを保持
+					...QUERY_CONFIG.STUDENT_DATA,
 				}),
 				queryClient.ensureQueryData({
 					queryKey: ["announcements-related-courses"],
 					queryFn: fetchAnnouncementsQueryFn,
-					staleTime: 5 * 60 * 1000, // 5 minutes
 				}),
 				queryClient.ensureQueryData({
 					queryKey: ["assignments-related-courses"],
 					queryFn: fetchAssignmentsQueryFn,
-					staleTime: 5 * 60 * 1000, // 5 minutes
 				}),
 				queryClient.ensureQueryData({
 					queryKey: ["submissions-related-courses", assignmentId],
 					queryFn: () => fetchSubmissionByIdQueryFn(assignmentId),
-					staleTime: 5 * 60 * 1000, // 5 minutes
 				}),
 			],
 		);

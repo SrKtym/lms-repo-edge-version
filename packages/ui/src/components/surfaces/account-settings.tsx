@@ -1,8 +1,9 @@
 import { Surface } from "@heroui/react";
 import { ArrowRight } from "@lms-repo-edge-version/ui/assets/icons/arrow-right";
+import { useState } from "react";
 import type { LinkComponentProps } from "../../lib/utils";
 import { CancelButton, DangerButton, DefaultButton } from "../button";
-import { DefaultModal } from "../modals/default-modal";
+import { ControlledModal } from "../modals/controlled-modal";
 
 interface AccountSettingsProps {
 	LinkComponent: React.ComponentType<LinkComponentProps>;
@@ -13,6 +14,7 @@ export function AccountSettings({
 	LinkComponent,
 	onDeleteAccount,
 }: AccountSettingsProps) {
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 	const style =
 		"flex flex-col rounded-lg border border-divider p-4 gap-2 sm:flex-row sm:items-center sm:justify-between";
 
@@ -81,18 +83,29 @@ export function AccountSettings({
 							アカウントを削除すると、すべてのデータが完全に削除されます
 						</p>
 					</div>
-					<DefaultModal
-						triggerButton={<DangerButton size="sm">削除</DangerButton>}
+					<DangerButton size="sm" onPress={() => setIsDeleteModalOpen(true)}>
+						削除
+					</DangerButton>
+					<ControlledModal
+						isOpen={isDeleteModalOpen}
+						onOpenChange={setIsDeleteModalOpen}
 						heading="アカウント削除の確認"
 					>
 						<p className="text-foreground">本当にアカウントを削除しますか？</p>
 						<div className="flex justify-end gap-2">
-							<CancelButton slot="close">キャンセル</CancelButton>
-							<DangerButton slot="close" onPress={onDeleteAccount}>
+							<CancelButton onClick={() => setIsDeleteModalOpen(false)}>
+								キャンセル
+							</CancelButton>
+							<DangerButton
+								onClick={() => {
+									onDeleteAccount();
+									setIsDeleteModalOpen(false);
+								}}
+							>
 								削除
 							</DangerButton>
 						</div>
-					</DefaultModal>
+					</ControlledModal>
 				</div>
 			</div>
 		</Surface>

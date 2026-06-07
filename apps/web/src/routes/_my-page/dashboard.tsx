@@ -10,7 +10,7 @@ import {
 	useMarkNotificationAsRead,
 	useNotifications,
 } from "@/hooks/notifications";
-import { queryClient } from "@/lib/query-client";
+import { QUERY_CONFIG, queryClient } from "@/lib/query-client";
 import {
 	fetchAssignmentsQueryFn,
 	fetchNotificationsQueryFn,
@@ -28,31 +28,26 @@ export const Route = createFileRoute("/_my-page/dashboard")({
 				queryClient.ensureQueryData({
 					queryKey: ["registered-courses"],
 					queryFn: fetchRegisteredCoursesQueryFn,
-					staleTime: 1000 * 60 * 60 * 24, // 24時間は「新鮮」と見なす
-					gcTime: 1000 * 60 * 60 * 24 * 7, // 7日間はキャッシュを保持
+					...QUERY_CONFIG.STUDENT_DATA,
 				}),
 
 				queryClient.ensureQueryData({
 					queryKey: ["schedules"],
 					queryFn: fetchSchedulesQueryFn,
-					staleTime: 5 * 60 * 1000,
 				}),
 
 				queryClient.ensureQueryData({
 					queryKey: ["assignments-related-courses"],
 					queryFn: fetchAssignmentsQueryFn,
-					staleTime: 5 * 60 * 1000, // 5 minutes
 				}),
 
 				queryClient.ensureQueryData({
 					queryKey: ["notifications"],
-					queryFn: fetchNotificationsQueryFn,
-					staleTime: 5 * 60 * 1000, // 5 minutes
+					queryFn: () => fetchNotificationsQueryFn(10, 0),
 				}),
 				queryClient.ensureQueryData({
 					queryKey: ["submissions"],
 					queryFn: fetchSubmissionsQueryFn,
-					staleTime: 5 * 60 * 1000, // 5 minutes
 				}),
 			]);
 
@@ -70,7 +65,13 @@ function RouteComponent() {
 	const { courses, schedules, assignments, initialNotifications, submissions } =
 		Route.useLoaderData();
 
-	const { data: notifications = [] } = useNotifications(initialNotifications);
+	const {
+		data: notificationsData,
+		hasNextPage,
+		fetchNextPage,
+		isFetchingNextPage,
+	} = useNotifications(10, initialNotifications);
+	const notifications = notificationsData?.pages.flat() || [];
 	const { mutate: markAsRead } = useMarkNotificationAsRead();
 	const { mutate: markAllAsRead } = useMarkAllNotificationsAsRead();
 	const { mutate: deleteNotification } = useDeleteNotification();
@@ -121,6 +122,9 @@ function RouteComponent() {
 						markAsRead={markAsRead}
 						markAllAsRead={markAllAsRead}
 						deleteNotification={deleteNotification}
+						hasNextPage={hasNextPage}
+						fetchNextPage={fetchNextPage}
+						isFetchingNextPage={isFetchingNextPage}
 					/>
 					<AssignmentsProgressCard
 						assignments={assignments}
@@ -137,6 +141,9 @@ function RouteComponent() {
 						markAsRead={markAsRead}
 						markAllAsRead={markAllAsRead}
 						deleteNotification={deleteNotification}
+						hasNextPage={hasNextPage}
+						fetchNextPage={fetchNextPage}
+						isFetchingNextPage={isFetchingNextPage}
 					/>
 					<UpcomingAssignmentsCard assignments={assignments} />
 					<AssignmentsProgressCard

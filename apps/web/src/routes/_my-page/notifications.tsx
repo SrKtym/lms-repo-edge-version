@@ -1,4 +1,3 @@
-import { Check } from "@lms-repo-edge-version/ui/assets/icons/check";
 import { Close } from "@lms-repo-edge-version/ui/assets/icons/close";
 import { MessagesSquareCheck } from "@lms-repo-edge-version/ui/assets/icons/messages-square-check";
 import { MessagesSquareOff } from "@lms-repo-edge-version/ui/assets/icons/messages-square-off";
@@ -8,43 +7,73 @@ import {
 	DefaultButton,
 } from "@lms-repo-edge-version/ui/components/button";
 import { LazyMotionProvider } from "@lms-repo-edge-version/ui/components/lazymotion-provider";
-import { formatTimestamp } from "@lms-repo-edge-version/ui/lib/utils";
-import { createFileRoute } from "@tanstack/react-router";
+import { DefaultPagination } from "@lms-repo-edge-version/ui/components/pagination";
+import { DefaultSelect } from "@lms-repo-edge-version/ui/components/select";
+import {
+	formatTimestamp,
+	getNotificationIcon,
+} from "@lms-repo-edge-version/ui/lib/utils";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AnimatePresence } from "motion/react";
 import * as m from "motion/react-m";
 import { useState } from "react";
+import { z } from "zod";
 import {
 	useDeleteNotification,
 	useMarkAllNotificationsAsRead,
 	useMarkNotificationAsRead,
-	useNotifications,
+	useNotificationsCount,
+	useNotificationsPaginated,
 } from "@/hooks/notifications";
 import { queryClient } from "@/lib/query-client";
 import { fetchNotificationsQueryFn } from "@/utils/query-utils";
 
+const searchSchema = z.object({
+	offset: z.number().optional(),
+	limit: z.number().optional(),
+	page: z.number().optional(),
+	filter: z.enum(["all", "unread", "read"]).optional(),
+});
+
 export const Route = createFileRoute("/_my-page/notifications")({
 	component: RouteComponent,
-	loader: async () => {
+	validateSearch: (search) => searchSchema.parse(search),
+	loaderDeps: ({ search: { limit, offset, page, filter } }) => ({
+		limit,
+		offset,
+		page,
+		filter,
+	}),
+	loader: async ({
+		deps: { limit = 10, offset = 0, page = 1, filter = "all" },
+	}) => {
 		const initialNotifications = await queryClient.ensureQueryData({
-			queryKey: ["notifications"],
-			queryFn: fetchNotificationsQueryFn,
-			staleTime: 5 * 60 * 1000, // 5 minutes
+			queryKey: ["notifications", offset, limit],
+			queryFn: () => fetchNotificationsQueryFn(limit, offset),
 		});
-
-		return { initialNotifications };
+		return { initialNotifications, limit, page, filter };
 	},
 });
 
 function RouteComponent() {
-	const { initialNotifications } = Route.useLoaderData();
-	const { data: notifications = [] } = useNotifications(initialNotifications);
+	const { initialNotifications, limit, page, filter } = Route.useLoaderData();
+	const navigate = useNavigate();
+	const { data: notifications = [] } = useNotificationsPaginated(
+		page,
+		limit,
+		initialNotifications,
+	);
+	const { data: totalItems = 0 } = useNotificationsCount(filter);
 
 	const options = ["all", "unread", "read"] as const;
-	const [filter, setFilter] = useState<(typeof options)[number]>("all");
+	const itemsPerPageOptions = ["10", "20", "50"];
 
 	const [expandedNotifications, setExpandedNotifications] = useState<
 		Set<string>
 	>(new Set());
+	const [selectedItemsPerPage, setSelectedItemsPerPage] = useState(
+		limit.toString(),
+	);
 
 	// フィルター適用
 	const filteredNotifications = notifications.filter((notification) => {
@@ -55,6 +84,51 @@ function RouteComponent() {
 
 	// 未読数
 	const unreadCount = notifications.filter((n) => !n.isRead).length;
+
+	// ページネーション用の総ページ数
+	const totalPages = Math.ceil(totalItems / limit);
+
+	// ページ変更時の処理
+	const handlePageChange = (page: number) => {
+		// setCurrentPage(page);
+		navigate({
+			to: "/notifications",
+			search: (prev) => ({
+				...prev,
+				page,
+				limit,
+				offset: (page - 1) * limit,
+			}),
+		});
+	};
+
+	// フィルター変更時の処理
+	const handleFilterChange = (filter: (typeof options)[number]) => {
+		navigate({
+			to: "/notifications",
+			search: (prev) => ({
+				...prev,
+				filter,
+			}),
+		});
+	};
+
+	// 表示件数変更時の処理
+	const handleItemsPerPageChange = (value: string | null) => {
+		if (!value) return;
+		const newLimit = Number(value);
+		const newOffset = 0; // Reset to first page when changing items per page
+		setSelectedItemsPerPage(value);
+		navigate({
+			to: "/notifications",
+			search: (prev) => ({
+				...prev,
+				limit: newLimit,
+				offset: newOffset,
+				page: 1,
+			}),
+		});
+	};
 
 	// 通知の展開/折りたたみ
 	const toggleExpand = (id: string) => {
@@ -92,7 +166,7 @@ function RouteComponent() {
 							{unreadCount > 0 && `${unreadCount}件の未読通知`}
 						</p>
 					</div>
-					<div className="flex items-center space-x-2">
+					<div className="flex items-center gap-2">
 						{unreadCount > 0 && (
 							<DefaultButton onPress={() => markAllAsRead}>
 								<MessagesSquareCheck />
@@ -115,108 +189,106 @@ function RouteComponent() {
 					initial={{ opacity: 0, y: -10 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.3, delay: 0.1 }}
-					className="flex items-center space-x-2"
+					className="flex items-center justify-between gap-2"
 				>
-					{options.map((filterType) => (
-						<m.button
-							key={filterType}
-							whileHover={{ scale: 1.05 }}
-							whileTap={{ scale: 0.95 }}
-							onClick={() => setFilter(filterType)}
-							className={`rounded-lg px-4 py-2 font-medium text-sm transition-colors ${
-								filter === filterType
-									? "bg-blue-500 text-white"
-									: "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-							}`}
-						>
-							{filterType === "all" && "すべて"}
-							{filterType === "unread" && "未読"}
-							{filterType === "read" && "既読"}
-						</m.button>
-					))}
+					<div className="flex items-center gap-2">
+						{options.map((filterType) => (
+							<m.button
+								key={filterType}
+								whileHover={{ scale: 1.05 }}
+								whileTap={{ scale: 0.95 }}
+								onClick={() => handleFilterChange(filterType)}
+								className={`rounded-lg px-4 py-2 font-medium text-sm transition-colors ${
+									filter === filterType
+										? "bg-blue-500 text-white"
+										: "bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+								}`}
+							>
+								{filterType === "all" && "すべて"}
+								{filterType === "unread" && "未読"}
+								{filterType === "read" && "既読"}
+							</m.button>
+						))}
+					</div>
+					<DefaultSelect
+						ariaLabel="表示件数"
+						className="w-24"
+						value={selectedItemsPerPage}
+						onChange={(value) => {
+							if (typeof value === "string") {
+								handleItemsPerPageChange(value);
+							}
+						}}
+						items={itemsPerPageOptions}
+					/>
 				</m.div>
 
 				{/* 通知リスト */}
 				<div className="space-y-3">
 					<AnimatePresence mode="popLayout">
 						{filteredNotifications.length > 0 ? (
-							filteredNotifications.map((notification, index) => (
-								<m.div
-									key={notification.id}
-									initial={{ opacity: 0, y: 20 }}
-									animate={{ opacity: 1, y: 0 }}
-									exit={{ opacity: 0, y: -20 }}
-									transition={{ duration: 0.3, delay: index * 0.05 }}
-									className={`rounded-lg border p-4 transition-all ${
-										notification.isRead
-											? "border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"
-											: "border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/20"
-									}`}
-									onClick={() => {
-										if (!notification.isRead) {
-											markAsRead(notification.id);
-										}
-										toggleExpand(notification.id);
-									}}
-								>
-									<div className="flex items-start justify-between">
-										<div className="flex items-start space-x-3">
-											{/* <div
-												className={`rounded-full p-2 ${getNotificationStyle(notification.type)}`}
-											>
-												{getNotificationIcon(notification.type)}
-											</div> */}
-											<div className="flex-1">
-												<div className="flex items-center space-x-2">
-													<h3 className="font-semibold text-gray-900 dark:text-white">
-														{notification.title}
-													</h3>
-													{!notification.isRead && (
-														<span className="inline-flex h-2 w-2 rounded-full bg-blue-500" />
-													)}
+							<>
+								{filteredNotifications.map((notification, index) => (
+									<m.div
+										key={notification.id}
+										initial={{ opacity: 0, y: 20 }}
+										animate={{ opacity: 1, y: 0 }}
+										exit={{ opacity: 0, y: -20 }}
+										transition={{ duration: 0.3, delay: index * 0.05 }}
+										className={`cursor-pointer rounded-lg border p-4 transition-all ${
+											notification.isRead
+												? "border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"
+												: "border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/20"
+										}`}
+										onClick={() => {
+											if (!notification.isRead) {
+												markAsRead(notification.id);
+											}
+											toggleExpand(notification.id);
+										}}
+									>
+										<div className="flex items-start justify-between">
+											<div className="flex items-start space-x-3">
+												<div className="rounded-full px-2 pb-1">
+													{getNotificationIcon(notification.title)}
 												</div>
-												<p className="mt-1 whitespace-pre-wrap text-gray-600 text-sm dark:text-gray-400">
-													{notification.description}
-												</p>
-												<p className="mt-2 text-gray-500 text-xs dark:text-gray-500">
-													{formatTimestamp(notification.createdAt)}
-												</p>
-												{/* {expandedNotifications.has(notification.id) && (
-													<m.div
-														initial={{ opacity: 0, height: 0 }}
-														animate={{ opacity: 1, height: "auto" }}
-														exit={{ opacity: 0, height: 0 }}
-														transition={{ duration: 0.2 }}
-														className="mt-3"
-													>
-														<m.button
-															whileHover={{ scale: 1.05 }}
-															whileTap={{ scale: 0.95 }}
-															onClick={(e) => {
-																e.stopPropagation();
-															}}
-															className="rounded-lg bg-blue-500 px-3 py-1 font-medium text-sm text-white transition-colors hover:bg-blue-600"
+												<div className="flex-1">
+													<div className="flex items-center space-x-2">
+														<h3 className="font-semibold text-gray-900 dark:text-white">
+															{notification.title}
+														</h3>
+														{!notification.isRead && (
+															<span className="inline-flex h-2 w-2 rounded-full bg-blue-500" />
+														)}
+													</div>
+													<p className="mt-1 whitespace-pre-wrap text-gray-600 text-sm dark:text-gray-400">
+														{notification.description}
+													</p>
+													<p className="mt-2 text-gray-500 text-xs dark:text-gray-500">
+														{formatTimestamp(notification.createdAt)}
+													</p>
+													{/* {expandedNotifications.has(notification.id) && (
+														<m.div
+															initial={{ opacity: 0, height: 0 }}
+															animate={{ opacity: 1, height: "auto" }}
+															exit={{ opacity: 0, height: 0 }}
+															transition={{ duration: 0.2 }}
+															className="mt-3"
 														>
-															テスト
-														</m.button>
-													</m.div>
-												)} */}
+															<m.button
+																whileHover={{ scale: 1.05 }}
+																whileTap={{ scale: 0.95 }}
+																onClick={(e) => {
+																	e.stopPropagation();
+																}}
+																className="rounded-lg bg-blue-500 px-3 py-1 font-medium text-sm text-white transition-colors hover:bg-blue-600"
+															>
+																テスト
+															</m.button>
+														</m.div>
+													)} */}
+												</div>
 											</div>
-										</div>
-										<div className="flex items-center space-x-2">
-											{!notification.isRead && (
-												<m.button
-													whileHover={{ scale: 1.1 }}
-													whileTap={{ scale: 0.9 }}
-													onClick={(e) => {
-														e.stopPropagation();
-														markAsRead(notification.id);
-													}}
-													className="rounded-full p-1 text-gray-400 hover:text-blue-500 dark:text-gray-500 dark:hover:text-blue-400"
-												>
-													<Check width={18} height={18} />
-												</m.button>
-											)}
 											<m.button
 												whileHover={{ scale: 1.1 }}
 												whileTap={{ scale: 0.9 }}
@@ -229,9 +301,16 @@ function RouteComponent() {
 												<Close width={18} height={18} />
 											</m.button>
 										</div>
-									</div>
-								</m.div>
-							))
+									</m.div>
+								))}
+								<DefaultPagination
+									currentPage={page}
+									totalPages={totalPages}
+									totalItems={totalItems}
+									itemsPerPage={limit}
+									onPageChange={handlePageChange}
+								/>
+							</>
 						) : (
 							<m.div
 								initial={{ opacity: 0 }}

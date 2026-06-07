@@ -3,13 +3,19 @@ import type { FetchAssignmentsFromUserCoursesReturnType } from "@lms-repo-edge-v
 import type { FetchRegisteredCoursesReturnType } from "@lms-repo-edge-version/db/utils/query/courses";
 import { ArrowLeft } from "@lms-repo-edge-version/ui/assets/icons/arrow-left";
 import { DefaultAvatar } from "@lms-repo-edge-version/ui/components/avatar";
-import { CancelButton } from "@lms-repo-edge-version/ui/components/button";
+import {
+	CancelButton,
+	DefaultButton,
+} from "@lms-repo-edge-version/ui/components/button";
 import { AnnouncementCard } from "@lms-repo-edge-version/ui/components/cards/announcement-card";
 import { AssignmentCard } from "@lms-repo-edge-version/ui/components/cards/assignment-card";
 import { Image } from "@lms-repo-edge-version/ui/components/image";
 import { Loader } from "@lms-repo-edge-version/ui/components/loader";
 import { TabsForCourseInfo } from "@lms-repo-edge-version/ui/components/tabs";
 import { Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { useAnnouncements } from "@/hooks/announcements";
+import { useAssignments } from "@/hooks/assignments";
 import { useMembersByCourseId } from "@/hooks/students";
 import { CreateAnnouncementForm } from "./create-announcement-form";
 import { CreateAssignmentForm } from "./create-assignment-form";
@@ -33,7 +39,11 @@ export default function RegisteredCourseInfos({
 		return <div>講義が見つかりません。</div>;
 	}
 
+	const { data: announcementsData = [] } = useAnnouncements(announcements);
+	const { data: assignmentsData = [] } = useAssignments(assignments);
 	const { data: members = [], isPending } = useMembersByCourseId(courseId);
+	const [isAnnouncementModalOpen, setIsAnnouncementModalOpen] = useState(false);
+	const [isAssignmentModalOpen, setIsAssignmentModalOpen] = useState(false);
 
 	return (
 		<>
@@ -83,15 +93,23 @@ export default function RegisteredCourseInfos({
 									<h2 className="font-medium text-gray-900 text-xl dark:text-gray-100">
 										お知らせ
 									</h2>
-									<CreateAnnouncementForm />
+									<DefaultButton
+										onPress={() => setIsAnnouncementModalOpen(true)}
+									>
+										お知らせを作成
+									</DefaultButton>
 								</div>
+								<CreateAnnouncementForm
+									isOpen={isAnnouncementModalOpen}
+									onOpenChange={setIsAnnouncementModalOpen}
+								/>
 
-								{announcements.length > 0 ? (
+								{announcementsData.length > 0 ? (
 									<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-										{announcements.map((announcement) => (
+										{announcementsData.map((announcement) => (
 											<AnnouncementCard
 												key={announcement.id}
-												data={announcement}
+												announcement={announcement}
 											/>
 										))}
 									</div>
@@ -110,12 +128,18 @@ export default function RegisteredCourseInfos({
 									<h2 className="font-medium text-gray-900 text-xl dark:text-gray-100">
 										課題
 									</h2>
-									<CreateAssignmentForm />
+									<DefaultButton onPress={() => setIsAssignmentModalOpen(true)}>
+										課題を作成
+									</DefaultButton>
 								</div>
+								<CreateAssignmentForm
+									isOpen={isAssignmentModalOpen}
+									onOpenChange={setIsAssignmentModalOpen}
+								/>
 
-								{assignments.length > 0 ? (
+								{assignmentsData.length > 0 ? (
 									<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-										{assignments.map((assignment) => (
+										{assignmentsData.map((assignment) => (
 											<Link
 												key={assignment.id}
 												to="/course-list"
@@ -125,10 +149,7 @@ export default function RegisteredCourseInfos({
 												})}
 												className="block"
 											>
-												<AssignmentCard
-													key={assignment.id}
-													assignment={assignment}
-												/>
+												<AssignmentCard assignment={assignment} />
 											</Link>
 										))}
 									</div>
@@ -147,28 +168,30 @@ export default function RegisteredCourseInfos({
 									コースメンバー
 								</h2>
 
-								{isPending ? (
-									<Loader />
-								) : members.length > 0 ? (
+								{members.length > 0 ? (
 									<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-										{members.map((member) => (
-											<div
-												key={member.id}
-												className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
-											>
-												<div className="flex items-center space-x-3">
-													<div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30">
-														<DefaultAvatar
-															src={member.avatar}
-															userName={member.name}
-														/>
+										{isPending ? (
+											<Loader />
+										) : (
+											members.map((member) => (
+												<div
+													key={member.id}
+													className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+												>
+													<div className="flex items-center space-x-3">
+														<div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30">
+															<DefaultAvatar
+																src={member.avatar}
+																userName={member.name}
+															/>
+														</div>
+														<h3 className="font-medium text-gray-900 dark:text-gray-100">
+															{member.name}
+														</h3>
 													</div>
-													<h3 className="font-medium text-gray-900 dark:text-gray-100">
-														{member.name}
-													</h3>
 												</div>
-											</div>
-										))}
+											))
+										)}
 									</div>
 								) : (
 									<div className="py-12 text-center">

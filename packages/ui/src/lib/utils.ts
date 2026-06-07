@@ -68,6 +68,20 @@ export function getColorbyRequirements(requirements: string) {
 	}
 }
 
+// 通知の種類に基づくアイコン
+export const getNotificationIcon = (title: string) => {
+	if (title.includes("新しい課題")) {
+		return "📝";
+	}
+	if (title.includes("新しいお知らせ")) {
+		return "💬";
+	}
+	if (title.includes("システム")) {
+		return "⚙️";
+	}
+	return "📢";
+};
+
 // 通知受信からの経過時間
 export function formatTimestamp(date: Date) {
 	const now = new Date();

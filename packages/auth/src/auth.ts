@@ -88,6 +88,27 @@ export function createAuth() {
 				httpOnly: true,
 			},
 		},
+		rateLimit: {
+			enabled: true,
+			customRules: {
+				"/sign-in/email": {
+					window: 60,
+					max: 5,
+				},
+				"/sign-up/email": {
+					window: 60,
+					max: 3,
+				},
+				"/request-reset-password": {
+					window: 60,
+					max: 3,
+				},
+				"/reset-password": {
+					window: 60,
+					max: 3,
+				},
+			},
+		},
 		plugins: [
 			admin({
 				defaultRole: "student",

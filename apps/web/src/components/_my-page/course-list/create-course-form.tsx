@@ -4,18 +4,26 @@ import {
 	DefaultButton,
 } from "@lms-repo-edge-version/ui/components/button";
 import { InputForForm } from "@lms-repo-edge-version/ui/components/input";
-import { DefaultModal } from "@lms-repo-edge-version/ui/components/modals/default-modal";
+import { ControlledModal } from "@lms-repo-edge-version/ui/components/modals/controlled-modal";
 import { useForm } from "@tanstack/react-form";
 import { useSearch } from "@tanstack/react-router";
 import { z } from "zod";
 import { useCreateCourse } from "@/hooks/courses";
 
-export function CreateCourseForm() {
+interface CreateCourseFormProps {
+	isOpen: boolean;
+	onOpenChange: (open: boolean) => void;
+}
+
+export function CreateCourseForm({
+	isOpen,
+	onOpenChange,
+}: CreateCourseFormProps) {
 	type Requirement = (typeof requirements)[number];
 	const { "assignment-id": assignmentId } = useSearch({
 		from: "/_my-page/course-list",
 	});
-	const { mutate: createCourse } = useCreateCourse();
+	const { mutateAsync: createCourse } = useCreateCourse();
 	const form = useForm({
 		defaultValues: {
 			name: "",
@@ -28,7 +36,12 @@ export function CreateCourseForm() {
 			departmentId: assignmentId || "",
 		},
 		onSubmit: async ({ value }) => {
-			createCourse(value);
+			const res = await createCourse(value);
+			if (res.status === 200) {
+				onOpenChange(false);
+			} else {
+				return;
+			}
 		},
 		validators: {
 			onSubmit: z.object({
@@ -59,8 +72,9 @@ export function CreateCourseForm() {
 	});
 
 	return (
-		<DefaultModal
-			triggerButton={<DefaultButton>講義を作成</DefaultButton>}
+		<ControlledModal
+			isOpen={isOpen}
+			onOpenChange={onOpenChange}
 			heading="講義の作成"
 		>
 			<form
@@ -296,12 +310,13 @@ export function CreateCourseForm() {
 				</form.Field>
 
 				<div className="flex justify-end gap-2">
-					<CancelButton slot="close">キャンセル</CancelButton>
+					<CancelButton onClick={() => onOpenChange(false)}>
+						キャンセル
+					</CancelButton>
 					<form.Subscribe>
 						{({ canSubmit, isSubmitting }) => (
 							<DefaultButton
 								type="submit"
-								slot="close"
 								isDisabled={!canSubmit || isSubmitting}
 							>
 								{isSubmitting ? "処理中..." : "作成"}
@@ -310,6 +325,6 @@ export function CreateCourseForm() {
 					</form.Subscribe>
 				</div>
 			</form>
-		</DefaultModal>
+		</ControlledModal>
 	);
 }

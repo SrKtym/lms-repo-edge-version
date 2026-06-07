@@ -11,8 +11,7 @@ export const useAnnouncements = (
 	return useQuery({
 		queryKey: ["announcements"],
 		queryFn: fetchAnnouncementsQueryFn,
-		staleTime: 5 * 60 * 1000, // 5 minutes
-		initialData: initialData,
+		initialData,
 	});
 };
 
@@ -31,8 +30,28 @@ export const useCreateAnnouncement = () => {
 			const data = await res.json();
 			return data;
 		},
+		onMutate: async (newAnnouncement) => {
+			// 古いデータの再取得をキャンセルする
+			await queryClient.cancelQueries({
+				queryKey: ["announcements"],
+			});
+
+			// 更新前のデータを保存し、エラー発生時のロールバック用に使用
+			const previousAnnouncements = queryClient.getQueryData(["announcements"]);
+
+			// 楽観的更新
+			queryClient.setQueryData(
+				["announcements"],
+				(old?: FetchAnnouncementsFromUserCoursesReturnType) => [
+					...(old ?? []),
+					newAnnouncement,
+				],
+			);
+
+			return { previousAnnouncements };
+		},
 		onSettled: () => {
-			// Always refetch after error or success
+			// ミューテーションの成功時も失敗時も再フェッチする
 			queryClient.invalidateQueries({ queryKey: ["announcements"] });
 		},
 	});

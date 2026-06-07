@@ -1,5 +1,9 @@
 import { createDb } from "../../index";
-import { fileSubmissionsMetadata, textSubmissions } from "../../schema/service";
+import {
+	fileSubmissionsMetadata,
+	submissionStatus,
+	textSubmissions,
+} from "../../schema/service";
 import type { FileSubmissionsMetadata, TextSubmissions } from "../../types";
 
 // テキスト形式の提出
@@ -30,5 +34,29 @@ export const createFileSubmissionMetadata = async (
 		return result;
 	} catch {
 		return { message: "ファイルメタデータの作成に失敗しました", status: 500 };
+	}
+};
+
+// 提出状況の更新
+export const updateSubmissionStatus = async (
+	assignmentId: string,
+	userId: string,
+	status: "未提出" | "提出済み" | "評定済み",
+) => {
+	try {
+		await createDb()
+			.insert(submissionStatus)
+			.values({
+				assignmentId,
+				userId,
+				status,
+			})
+			.onConflictDoUpdate({
+				target: [submissionStatus.assignmentId, submissionStatus.userId],
+				set: { status },
+			});
+		return { message: "提出状況の更新に成功しました", status: 200 };
+	} catch {
+		return { message: "提出状況の更新に失敗しました", status: 500 };
 	}
 };

@@ -6,22 +6,30 @@ import type { FetchSchedulesReturnType } from "@lms-repo-edge-version/db/utils/q
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { client } from "@/lib/hono-client";
 import { queryClient } from "@/lib/query-client";
-import { fetchSchedulesQueryFn } from "@/utils/query-utils";
+import {
+	fetchScheduleByIdQueryFn,
+	fetchSchedulesQueryFn,
+} from "@/utils/query-utils";
 
+// スケジュールを取得するカスタムフック
 export const useSchedules = (initialData?: FetchSchedulesReturnType) => {
 	return useQuery({
 		queryKey: ["schedules"],
 		queryFn: fetchSchedulesQueryFn,
 		initialData,
-		staleTime: 5 * 60 * 1000, // 5 minutes
-		gcTime: 10 * 60 * 1000, // 10 minutes (garbage collection)
-		refetchOnWindowFocus: false,
-		refetchOnReconnect: true,
-		retry: 3,
-		retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
 	});
 };
 
+// 単一のスケジュールを取得するカスタムフック
+export const useFetchSchedule = (scheduleId: string) => {
+	return useQuery({
+		queryKey: ["schedule", scheduleId],
+		queryFn: () => fetchScheduleByIdQueryFn(scheduleId),
+		enabled: !!scheduleId,
+	});
+};
+
+// スケジュールを作成するカスタムフック
 export const useCreateSchedule = () => {
 	return useMutation({
 		mutationFn: async (scheduleData: Omit<Schedules, SchedulesOptional>) => {
@@ -32,13 +40,13 @@ export const useCreateSchedule = () => {
 			return data;
 		},
 		onMutate: async (scheduleData) => {
-			// Cancel any outgoing refetches
+			// 古いデータの再取得をキャンセルする
 			await queryClient.cancelQueries({ queryKey: ["schedules"] });
 
-			// Snapshot the previous value
+			// 更新前のデータを保存し、エラー発生時のロールバック用に使用
 			const previousSchedules = queryClient.getQueryData(["schedules"]);
 
-			// Optimistically update to the new value
+			// 楽観的更新
 			queryClient.setQueryData(["schedules"], (old: Schedules[]) => [
 				...old,
 				{ ...scheduleData, id: "temp-id" },
@@ -47,35 +55,36 @@ export const useCreateSchedule = () => {
 			return { previousSchedules };
 		},
 		onError: (_err, _scheduleData, context) => {
-			// If the mutation fails, use the context returned from onMutate to roll back
+			// ミューテーションが失敗した場合, ロールバック用データをコンテキストから受け取る
 			if (context?.previousSchedules) {
 				queryClient.setQueryData(["schedules"], context.previousSchedules);
 			}
 		},
 		onSettled: () => {
-			// Always refetch after error or success
+			// ミューテーションの成功時も失敗時も再フェッチする
 			queryClient.invalidateQueries({ queryKey: ["schedules"] });
 		},
 	});
 };
 
+// スケジュールを削除するカスタムフック
 export const useDeleteSchedule = () => {
 	return useMutation({
 		mutationFn: async (scheduleId: string) => {
 			const res = await client.api.schedules.$delete({
-				json: scheduleId,
+				json: { scheduleId },
 			});
 			const data = await res.json();
 			return data;
 		},
 		onMutate: async (scheduleId) => {
-			// Cancel any outgoing refetches
+			// 古いデータの再取得をキャンセルする
 			await queryClient.cancelQueries({ queryKey: ["schedules"] });
 
-			// Snapshot the previous value
+			// 更新前のデータを保存し、エラー発生時のロールバック用に使用
 			const previousSchedules = queryClient.getQueryData(["schedules"]);
 
-			// Optimistically update to the new value
+			// 楽観的更新
 			queryClient.setQueryData(
 				["schedules"],
 				(old: Schedules[]) =>
@@ -85,13 +94,13 @@ export const useDeleteSchedule = () => {
 			return { previousSchedules };
 		},
 		onError: (_err, _scheduleId, context) => {
-			// If the mutation fails, use the context returned from onMutate to roll back
+			// ミューテーションが失敗した場合, ロールバック用データをコンテキストから受け取る
 			if (context?.previousSchedules) {
 				queryClient.setQueryData(["schedules"], context.previousSchedules);
 			}
 		},
 		onSettled: () => {
-			// Always refetch after error or success
+			// ミューテーションの成功時も失敗時も再フェッチする
 			queryClient.invalidateQueries({ queryKey: ["schedules"] });
 		},
 	});

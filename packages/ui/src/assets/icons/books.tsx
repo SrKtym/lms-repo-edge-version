@@ -1,7 +1,13 @@
-export const Books = () => (
+export const Books = ({
+	width = 48,
+	height = 48,
+}: {
+	width?: number;
+	height?: number;
+}) => (
 	<svg
-		width="48"
-		height="48"
+		width={width}
+		height={height}
 		viewBox="0 0 512 512"
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"

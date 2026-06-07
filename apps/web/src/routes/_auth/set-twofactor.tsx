@@ -3,7 +3,7 @@ import {
 	CancelButton,
 	DefaultButton,
 } from "@lms-repo-edge-version/ui/components/button";
-import { DefaultModal } from "@lms-repo-edge-version/ui/components/modals/default-modal";
+import { ControlledModal } from "@lms-repo-edge-version/ui/components/modals/controlled-modal";
 import { RadioGroupFor2fa } from "@lms-repo-edge-version/ui/components/radio-group";
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useState } from "react";
@@ -21,8 +21,6 @@ export const Route = createFileRoute("/_auth/set-twofactor")({
 				const res = await authClient.getSession();
 				return res;
 			},
-			staleTime: 5 * 60 * 1000, // 5 minutes
-			gcTime: 10 * 60 * 1000, // 10 minutes
 		});
 
 		if (!session.data) {
@@ -47,6 +45,7 @@ function RouteComponent() {
 	const { twoFactorEnabled } = Route.useLoaderData();
 	const [selected, setSelected] = useState<string>("valid");
 	const [totpURI, setTotpURI] = useState<string>();
+	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	return (
 		<div className="space-y-6">
@@ -59,8 +58,10 @@ function RouteComponent() {
 				<Link to="/add-passkey">
 					<CancelButton>今はしない</CancelButton>
 				</Link>
-				<DefaultModal
-					triggerButton={<DefaultButton>続行</DefaultButton>}
+				<DefaultButton onPress={() => setIsModalOpen(true)}>続行</DefaultButton>
+				<ControlledModal
+					isOpen={isModalOpen}
+					onOpenChange={setIsModalOpen}
 					heading={
 						totpURI
 							? "TOTPシークレットキーの登録"
@@ -75,7 +76,7 @@ function RouteComponent() {
 							setTotpURI={(totpURI) => setTotpURI(totpURI)}
 						/>
 					)}
-				</DefaultModal>
+				</ControlledModal>
 			</div>
 		</div>
 	);

@@ -12,8 +12,8 @@ export function DefaultTooltip({
 }: DefaultTooltipProps) {
 	return (
 		<Tooltip delay={0}>
-			<Tooltip.Trigger className="w-full">{triggerElement}</Tooltip.Trigger>
-			<Tooltip.Content placement="right">{content}</Tooltip.Content>
+			<Tooltip.Trigger>{triggerElement}</Tooltip.Trigger>
+			<Tooltip.Content placement="bottom">{content}</Tooltip.Content>
 		</Tooltip>
 	);
 }

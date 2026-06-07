@@ -1,4 +1,4 @@
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, or } from "drizzle-orm";
 import { createDb } from "../../index";
 import {
 	courses,
@@ -8,34 +8,103 @@ import {
 	registration,
 } from "../../schema";
 
-// 通知の取得
-export async function fetchNotifications(userId: string) {
-	const notificationList = await createDb().transaction(async (tx) => {
-		const ids = await tx
-			.select({
-				courseId: courses.id,
-				departmentId: departments.id,
-				facultyId: faculties.id,
-			})
-			.from(courses)
-			.innerJoin(registration, eq(courses.id, registration.courseId))
-			.innerJoin(departments, eq(courses.departmentId, departments.id))
-			.innerJoin(faculties, eq(departments.facultyId, faculties.id))
-			.where(eq(registration.userId, userId));
+// 通知の総数を取得(サブクエリを使用)
+export async function fetchNotificationsCount(
+	userId: string,
+	filter?: "all" | "unread" | "read",
+) {
+	const baseConditions = [
+		eq(notifications.receiver, "students"),
+		inArray(
+			notifications.receiver,
+			createDb()
+				.select({ id: courses.id })
+				.from(courses)
+				.innerJoin(registration, eq(courses.id, registration.courseId))
+				.where(eq(registration.userId, userId)),
+		),
+		inArray(
+			notifications.receiver,
+			createDb()
+				.select({ id: departments.id })
+				.from(departments)
+				.innerJoin(courses, eq(departments.id, courses.departmentId))
+				.innerJoin(registration, eq(courses.id, registration.courseId))
+				.where(eq(registration.userId, userId)),
+		),
+		inArray(
+			notifications.receiver,
+			createDb()
+				.select({ id: faculties.id })
+				.from(faculties)
+				.innerJoin(departments, eq(faculties.id, departments.facultyId))
+				.innerJoin(courses, eq(departments.id, courses.departmentId))
+				.innerJoin(registration, eq(courses.id, registration.courseId))
+				.where(eq(registration.userId, userId)),
+		),
+	];
 
-		const idList = ids.flatMap(({ courseId, departmentId, facultyId }) => [
-			courseId,
-			departmentId,
-			facultyId,
-		]);
+	let conditions = baseConditions;
 
-		const notificationsList = await tx
-			.select()
-			.from(notifications)
-			.where(inArray(notifications.receiver, [...idList, "students"]));
+	if (filter === "unread") {
+		conditions = [...baseConditions, eq(notifications.isRead, false)];
+	} else if (filter === "read") {
+		conditions = [...baseConditions, eq(notifications.isRead, true)];
+	}
 
-		return notificationsList;
-	});
+	const count = await createDb()
+		.select({ count: notifications.id })
+		.from(notifications)
+		.where(
+			and(or(...baseConditions), ...conditions.slice(baseConditions.length)),
+		);
+
+	return count.length;
+}
+
+// 通知の取得（サブクエリを使用）
+export async function fetchNotifications(
+	userId: string,
+	limit = 10,
+	offset = 0,
+) {
+	const notificationList = await createDb()
+		.select()
+		.from(notifications)
+		.where(
+			or(
+				eq(notifications.receiver, "students"),
+				inArray(
+					notifications.receiver,
+					createDb()
+						.select({ id: courses.id })
+						.from(courses)
+						.innerJoin(registration, eq(courses.id, registration.courseId))
+						.where(eq(registration.userId, userId)),
+				),
+				inArray(
+					notifications.receiver,
+					createDb()
+						.select({ id: departments.id })
+						.from(departments)
+						.innerJoin(courses, eq(departments.id, courses.departmentId))
+						.innerJoin(registration, eq(courses.id, registration.courseId))
+						.where(eq(registration.userId, userId)),
+				),
+				inArray(
+					notifications.receiver,
+					createDb()
+						.select({ id: faculties.id })
+						.from(faculties)
+						.innerJoin(departments, eq(faculties.id, departments.facultyId))
+						.innerJoin(courses, eq(departments.id, courses.departmentId))
+						.innerJoin(registration, eq(courses.id, registration.courseId))
+						.where(eq(registration.userId, userId)),
+				),
+			),
+		)
+		.limit(limit)
+		.offset(offset);
 
 	return notificationList;
 }

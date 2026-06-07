@@ -1,11 +1,10 @@
 import { assignmentFormat } from "@lms-repo-edge-version/db/schema/service";
-import { FileText } from "@lms-repo-edge-version/ui/assets/icons/file-text";
 import {
 	CancelButton,
 	DefaultButton,
 } from "@lms-repo-edge-version/ui/components/button";
 import { InputForForm } from "@lms-repo-edge-version/ui/components/input";
-import { DefaultModal } from "@lms-repo-edge-version/ui/components/modals/default-modal";
+import { ControlledModal } from "@lms-repo-edge-version/ui/components/modals/controlled-modal";
 import {
 	getLocalTimeZone,
 	now,
@@ -16,12 +15,20 @@ import { useSearch } from "@tanstack/react-router";
 import { z } from "zod";
 import { useCreateAssignment } from "@/hooks/assignments";
 
-export function CreateAssignmentForm() {
+interface CreateAssignmentFormProps {
+	isOpen: boolean;
+	onOpenChange: (open: boolean) => void;
+}
+
+export function CreateAssignmentForm({
+	isOpen,
+	onOpenChange,
+}: CreateAssignmentFormProps) {
 	const dateTime = now(getLocalTimeZone());
 	const { "course-id": courseId } = useSearch({
 		from: "/_my-page/course-list",
 	});
-	const { mutate: createAssignment } = useCreateAssignment();
+	const { mutateAsync: createAssignment } = useCreateAssignment();
 	const form = useForm({
 		defaultValues: {
 			title: "",
@@ -33,10 +40,15 @@ export function CreateAssignmentForm() {
 		},
 		onSubmit: async ({ value }) => {
 			const { dueDate, ...rest } = value;
-			createAssignment({
+			const res = await createAssignment({
 				...rest,
 				dueDate: dueDate.toDate(),
 			});
+			if (res.status === 201) {
+				onOpenChange(false);
+			} else {
+				return;
+			}
 		},
 		validators: {
 			onSubmit: z.object({
@@ -51,13 +63,9 @@ export function CreateAssignmentForm() {
 	});
 
 	return (
-		<DefaultModal
-			triggerButton={
-				<DefaultButton>
-					<FileText />
-					課題を作成
-				</DefaultButton>
-			}
+		<ControlledModal
+			isOpen={isOpen}
+			onOpenChange={onOpenChange}
 			heading="課題の作成"
 		>
 			<form
@@ -236,12 +244,13 @@ export function CreateAssignmentForm() {
 				</form.Field>
 
 				<div className="flex justify-end gap-2">
-					<CancelButton slot="close">キャンセル</CancelButton>
+					<CancelButton onClick={() => onOpenChange(false)}>
+						キャンセル
+					</CancelButton>
 					<form.Subscribe>
 						{({ canSubmit, isSubmitting }) => (
 							<DefaultButton
 								type="submit"
-								slot="close"
 								isDisabled={!canSubmit || isSubmitting}
 							>
 								{isSubmitting ? "処理中..." : "作成"}
@@ -250,6 +259,6 @@ export function CreateAssignmentForm() {
 					</form.Subscribe>
 				</div>
 			</form>
-		</DefaultModal>
+		</ControlledModal>
 	);
 }

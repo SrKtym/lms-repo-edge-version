@@ -7,9 +7,9 @@ import { DefaultChip } from "../chip";
 
 // AnnouncementCard component
 export function AnnouncementCard({
-	data,
+	announcement,
 }: {
-	data: FetchAnnouncementsFromUserCoursesReturnType[number];
+	announcement: FetchAnnouncementsFromUserCoursesReturnType[number];
 }) {
 	function getFileIcon(type: string) {
 		switch (type) {
@@ -41,15 +41,15 @@ export function AnnouncementCard({
 
 	return (
 		<BaseCard
-			key={data.id}
+			key={announcement.id}
 			className="border border-gray-200 dark:border-gray-700"
 		>
 			<div className="flex gap-3">
 				<div className="mt-1">
 					<div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
-						{data.type && (
+						{announcement.type && (
 							<div className="text-gray-600 dark:text-gray-400">
-								{getFileIcon(data.type)}
+								{getFileIcon(announcement.type)}
 							</div>
 						)}
 					</div>
@@ -58,20 +58,25 @@ export function AnnouncementCard({
 					<div className="flex items-start justify-between">
 						<div className="flex-1">
 							<h3 className="font-medium text-gray-900 dark:text-gray-100">
-								{data.title}
+								{announcement.title}
 							</h3>
 							<p className="text-gray-500 text-sm dark:text-gray-400">
-								{data.createdAt.toLocaleDateString("default", dateOptions)}
+								{announcement.createdAt
+									? announcement.createdAt.toLocaleDateString(
+											"default",
+											dateOptions,
+										)
+									: "日付なし"}
 							</p>
 						</div>
-						<DefaultChip size="sm" color={getChipColor(data.type)}>
-							{data.type}
+						<DefaultChip size="sm" color={getChipColor(announcement.type)}>
+							{announcement.type}
 						</DefaultChip>
 					</div>
 
 					<div className="mt-3">
 						<p className="text-gray-700 leading-relaxed dark:text-gray-300">
-							{data.description}
+							{announcement.description}
 						</p>
 					</div>
 				</div>

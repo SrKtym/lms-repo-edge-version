@@ -1,9 +1,8 @@
-import { and, eq, lte, notInArray, or, sql } from "drizzle-orm";
+import { and, eq, lte, or, sql } from "drizzle-orm";
 import { createDb } from "../../index";
 import {
 	courses,
 	departments,
-	faculties,
 	registration,
 	students,
 	user,
@@ -17,60 +16,59 @@ export async function fetchCourses(
 	limit = 10,
 	offset = 0,
 ) {
-	const result = await createDb().transaction(async (tx) => {
-		// ユーザーが既に履修済みの講義を取得
-		const completedCoursesByUser = await tx
-			.select({
-				courseId: registration.courseId,
-			})
-			.from(registration)
-			.where(
-				and(
-					eq(registration.userId, userId),
-					eq(registration.isCompleted, true),
-				),
-			);
+	// ユーザーの学科情報を取得
+	const studentInfo = await createDb()
+		.select({
+			departmentId: students.departmentId,
+			grade: students.grade,
+		})
+		.from(students)
+		.where(eq(students.id, userId))
+		.limit(1);
 
-		const completedCourseIds = completedCoursesByUser.map(
-			({ courseId }) => courseId,
-		);
+	if (!studentInfo[0]) {
+		return [];
+	}
 
-		// 登録可能な講義を取得
-		const courseList = await tx
-			.select({
-				id: courses.id,
-				name: courses.name,
-				weekdays: courses.weekdays,
-				period: courses.period,
-				credits: courses.credits,
-				targetGrade: courses.targetGrade,
-				requirements: courses.requirements,
-				classRoom: courses.classRoom,
-				professor: user.name,
-			})
-			.from(courses)
-			.innerJoin(departments, eq(courses.departmentId, departments.id))
-			.innerJoin(faculties, eq(departments.facultyId, faculties.id))
-			.innerJoin(user, eq(courses.professorId, user.id))
-			.innerJoin(students, lte(courses.targetGrade, students.grade))
-			.where(
-				and(
-					eq(courses.weekdays, weekdays),
-					eq(courses.period, period),
-					notInArray(courses.id, completedCourseIds),
-					or(
-						eq(departments.id, students.departmentId),
-						eq(departments.name, "全学科"),
-					),
-				),
-			)
-			.limit(limit)
-			.offset(offset);
+	const { departmentId, grade } = studentInfo[0];
 
-		return courseList;
-	});
+	// 登録可能な講義を取得（サブクエリで履修済み講義を除外）
+	const courseList = await createDb()
+		.select({
+			id: courses.id,
+			name: courses.name,
+			weekdays: courses.weekdays,
+			period: courses.period,
+			credits: courses.credits,
+			targetGrade: courses.targetGrade,
+			requirements: courses.requirements,
+			classRoom: courses.classRoom,
+			professor: user.name,
+		})
+		.from(courses)
+		.innerJoin(departments, eq(courses.departmentId, departments.id))
+		.innerJoin(user, eq(courses.professorId, user.id))
+		.leftJoin(
+			registration,
+			and(
+				eq(courses.id, registration.courseId),
+				eq(registration.userId, userId),
+				eq(registration.isCompleted, true),
+			),
+		)
+		.where(
+			and(
+				eq(courses.weekdays, weekdays),
+				eq(courses.period, period),
+				lte(courses.targetGrade, grade),
+				sql`${registration.courseId} IS NULL`,
+				or(eq(departments.id, departmentId), eq(departments.name, "全学科")),
+			),
+		)
+		.limit(limit)
+		.offset(offset);
 
-	return result;
+	return courseList;
 }
 
 // 学生が登録する講義を取得する

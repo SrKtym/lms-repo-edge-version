@@ -56,6 +56,20 @@ export const fetchSchedulesQueryFn = async () => {
 	return parsedData;
 };
 
+// 単一のスケジュール取得用のqueryFn
+export const fetchScheduleByIdQueryFn = async (scheduleId: string) => {
+	const res = await client.api.schedules[":id"].$get({
+		param: { id: scheduleId },
+	});
+	const data = await res.json();
+	const parsedData = data.map((schedule) => ({
+		...schedule,
+		startTime: new Date(schedule.startTime),
+		endTime: new Date(schedule.endTime),
+	}));
+	return parsedData;
+};
+
 // お知らせ取得用のqueryFn
 export const fetchAnnouncementsQueryFn = async () => {
 	const res = await client.api.announcements.$get();
@@ -99,14 +113,44 @@ export const fetchSubmissionByIdQueryFn = async (assignmentId?: string) => {
 };
 
 // 通知取得用のqueryFn
-export const fetchNotificationsQueryFn = async () => {
-	const res = await client.api.notifications.$get();
+export const fetchNotificationsQueryFn = async (
+	limit?: number,
+	offset?: number,
+) => {
+	if (limit === undefined || offset === undefined) {
+		return [];
+	}
+
+	const queryParams: Record<string, string> = {};
+
+	queryParams.limit = limit.toString();
+	queryParams.offset = offset.toString();
+
+	const res = await client.api.notifications.$get({
+		query: queryParams,
+	});
 	const data = await res.json();
 	const parsedData = data.map((notification) => ({
 		...notification,
 		createdAt: new Date(notification.createdAt),
 	}));
 	return parsedData;
+};
+
+// 通知総数取得用のqueryFn
+export const fetchNotificationsCountQueryFn = async (
+	filter?: "all" | "unread" | "read",
+) => {
+	const queryParams: Record<string, string> = {};
+	if (filter) {
+		queryParams.filter = filter;
+	}
+
+	const res = await client.api.notifications.count.$get({
+		query: queryParams,
+	});
+	const { count } = await res.json();
+	return count;
 };
 
 // 学生データ取得用のqueryFn

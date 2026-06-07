@@ -8,7 +8,7 @@ interface HeroSectionProps {
 export function HeroSection({ children }: HeroSectionProps) {
 	const features = [
 		"時間割管理",
-		"課題追跡",
+		"課題管理",
 		"通知機能",
 		"マルチデバイス",
 	] as const;
@@ -46,7 +46,7 @@ export function HeroSection({ children }: HeroSectionProps) {
 							texts={[
 								"manages enrolled courses",
 								"manages your schedules",
-								"tracks your assignments",
+								"manages your assignments",
 							]}
 							className="block"
 						/>

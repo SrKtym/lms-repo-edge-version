@@ -8,6 +8,8 @@
 	},
 	"scripts": {},
 	"dependencies": {
+		"@aws-sdk/client-s3": "^3.1062.0",
+		"@aws-sdk/s3-request-presigner": "^3.1062.0",
 		"@hono/zod-validator": "^0.7.6",
 		"@lms-repo-edge-version/auth": "workspace:*",
 		"@lms-repo-edge-version/db": "workspace:*",

@@ -1,14 +1,18 @@
 import { LazyMotionProvider } from "@lms-repo-edge-version/ui/components/lazymotion-provider";
 import { createFileRoute } from "@tanstack/react-router";
 import * as m from "motion/react-m";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { CreateScheduleForm } from "@/components/_my-page/schedules/create-schedule-form";
 import { DayView } from "@/components/_my-page/schedules/day-view";
 import { MonthView } from "@/components/_my-page/schedules/month-view";
 import { WeekView } from "@/components/_my-page/schedules/week-view";
-import { useSchedules } from "@/hooks/schedules";
+import {
+	useDeleteSchedule,
+	useFetchSchedule,
+	useSchedules,
+} from "@/hooks/schedules";
 import { useCourseEvents } from "@/hooks/use-course-events";
-import { queryClient } from "@/lib/query-client";
+import { QUERY_CONFIG, queryClient } from "@/lib/query-client";
 import {
 	fetchRegisteredCoursesQueryFn,
 	fetchSchedulesQueryFn,
@@ -22,13 +26,11 @@ export const Route = createFileRoute("/_my-page/schedules")({
 			queryClient.ensureQueryData({
 				queryKey: ["registered-courses"],
 				queryFn: fetchRegisteredCoursesQueryFn,
-				staleTime: 1000 * 60 * 60 * 24, // 24時間は「新鮮」と見なす
-				gcTime: 1000 * 60 * 60 * 24 * 7, // 7日間はキャッシュを保持
+				...QUERY_CONFIG.STUDENT_DATA,
 			}),
 			queryClient.ensureQueryData({
 				queryKey: ["schedules"],
 				queryFn: fetchSchedulesQueryFn,
-				staleTime: 5 * 60 * 1000,
 			}),
 		]);
 		return { courses, initialSchedules };
@@ -36,13 +38,34 @@ export const Route = createFileRoute("/_my-page/schedules")({
 });
 
 function RouteComponent() {
+	const views = ["month", "week", "day"] as const;
 	const { courses, initialSchedules } = Route.useLoaderData();
-	const [selectedView, setSelectedView] = useState<"month" | "week" | "day">(
-		"month",
-	);
+	const [selectedView, setSelectedView] =
+		useState<(typeof views)[number]>("month");
 	const [currentDate, setCurrentDate] = useState(new Date());
+	const [editingScheduleId, setEditingScheduleId] = useState<string | null>(
+		null,
+	);
+	const modalTriggerRef = useRef<HTMLButtonElement>(null);
+
+	// スケジュールデータを取得
 	const { data: schedules = [] } = useSchedules(initialSchedules);
+	// スケジュール削除用のミューテーション
+	const { mutate: deleteSchedule } = useDeleteSchedule();
+	// 編集対象のスケジュールを取得
+	const { data: editingSchedule = [] } = useFetchSchedule(
+		editingScheduleId || "",
+	);
 	const { getEventsForDay } = useCourseEvents(courses, schedules);
+
+	// 編集ボタンがクリックされた時
+	const handleEditSchedule = (scheduleId: string) => {
+		setEditingScheduleId(scheduleId);
+		// モーダルを開くためにトリガーボタンをクリック
+		setTimeout(() => {
+			modalTriggerRef.current?.click();
+		}, 100);
+	};
 
 	// 月の最初の日と最後の日を取得
 	const getMonthRange = (date: Date) => {
@@ -162,6 +185,8 @@ function RouteComponent() {
 			calendar={generateMonthCalendar()}
 			changeMonth={changeMonth}
 			getEventsForDay={getEventsForDay}
+			deleteSchedule={deleteSchedule}
+			editSchedule={handleEditSchedule}
 		/>
 	);
 
@@ -171,6 +196,8 @@ function RouteComponent() {
 			weekData={generateWeekCalendar()}
 			changeWeek={changeWeek}
 			getEventsForDay={getEventsForDay}
+			deleteSchedule={deleteSchedule}
+			editSchedule={handleEditSchedule}
 		/>
 	);
 
@@ -180,6 +207,8 @@ function RouteComponent() {
 			currentDate={currentDate}
 			changeDay={changeDay}
 			getEventsForDay={getEventsForDay}
+			deleteSchedule={deleteSchedule}
+			editSchedule={handleEditSchedule}
 		/>
 	);
 
@@ -204,7 +233,7 @@ function RouteComponent() {
 
 					<div className="flex items-center space-x-3">
 						<div className="flex items-center space-x-2 rounded-lg bg-gray-100 p-1 dark:bg-gray-800">
-							{(["month", "week", "day"] as const).map((view) => (
+							{views.map((view) => (
 								<m.button
 									key={view}
 									whileHover={{ scale: 1.05 }}
@@ -220,7 +249,10 @@ function RouteComponent() {
 									{view === "month" ? "月" : view === "week" ? "週" : "日"}
 								</m.button>
 							))}
-							<CreateScheduleForm />
+							<CreateScheduleForm
+								initialData={editingSchedule}
+								triggerRef={modalTriggerRef}
+							/>
 						</div>
 					</div>
 				</m.div>

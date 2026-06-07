@@ -6,23 +6,23 @@ import type {
 import { toast } from "@lms-repo-edge-version/ui/components/toast";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { client } from "@/lib/hono-client";
-import { queryClient } from "@/lib/query-client";
+import { QUERY_CONFIG, queryClient } from "@/lib/query-client";
 import {
 	fetchCoursesByWeekdayAndPeriodQueryFn,
 	fetchRegisteredCoursesQueryFn,
 } from "@/utils/query-utils";
 
 // トースト表示
-function showToast(data: { status: number; message: string }) {
-	switch (data.status) {
+function showToast(error: { status: number; message: string }) {
+	switch (error.status) {
 		case 400:
 		case 404:
 			toast.danger("講義の登録に失敗しました", {
-				description: data.message,
+				description: error.message,
 			});
 			break;
 		case 500:
-			toast.danger(data.message);
+			toast.danger(error.message);
 	}
 }
 
@@ -33,8 +33,7 @@ export const useRegisteredCourses = (
 	return useQuery({
 		queryKey: ["registered-courses"],
 		queryFn: fetchRegisteredCoursesQueryFn,
-		staleTime: 1000 * 60 * 60 * 24, // 24時間は「新鮮」と見なす
-		gcTime: 1000 * 60 * 60 * 24 * 7, // 7日間はキャッシュを保持
+		...QUERY_CONFIG.STUDENT_DATA,
 		initialData,
 	});
 };
@@ -53,11 +52,10 @@ export const useSearchCourses = (weekdays?: number, period?: number) => {
 		},
 		initialPageParam: 0,
 		enabled: !!weekdays && !!period,
-		staleTime: 1000 * 60 * 60 * 24, // 24時間は「新鮮」と見なす
-		gcTime: 1000 * 60 * 60 * 24 * 7, // 7日間はキャッシュを保持
+		...QUERY_CONFIG.STUDENT_DATA,
 		getNextPageParam: (lastPage, allPages) => {
 			if (lastPage.length < 10) {
-				return undefined; // データが10件未満の場合はこれ以上データがない
+				return; // データが10件未満の場合はこれ以上データがない
 			}
 			return allPages.length; // 次のページ番号
 		},
@@ -75,7 +73,7 @@ export const useCreateCourse = () => {
 			return data;
 		},
 		onSettled: () => {
-			// Always refetch after error or success
+			// ミューテーションの成功時も失敗時も再フェッチする
 			queryClient.invalidateQueries({ queryKey: ["announcements"] });
 		},
 	});
@@ -95,7 +93,7 @@ export const useRegisterCourse = (searchCourses?: FetchCoursesReturnType) => {
 			// 古いデータの再取得をキャンセルする
 			await queryClient.cancelQueries({ queryKey: ["registered-courses"] });
 
-			// キャッシュされているデータを同期的に取得する
+			// 更新前のデータを保存し、エラー発生時のロールバック用に使用
 			const previousCourses = queryClient.getQueryData(["registered-courses"]);
 
 			const courseToRegister = searchCourses?.find(
@@ -142,7 +140,7 @@ export const useUnregisterCourse = () => {
 			// 古いデータの再取得をキャンセルする
 			await queryClient.cancelQueries({ queryKey: ["registered-courses"] });
 
-			// キャッシュされているデータを同期的に取得する
+			// 更新前のデータを保存し、エラー発生時のロールバック用に使用
 			const previousCourses = queryClient.getQueryData(["registered-courses"]);
 
 			// 楽観的更新
