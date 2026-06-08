@@ -18,7 +18,13 @@ export function createAuth() {
 			provider: "pg",
 			schema,
 		}),
-		trustedOrigins: [env.CORS_ORIGIN],
+		trustedOrigins: [
+			env.CORS_ORIGIN,
+			"http://localhost:5173",
+			"http://127.0.0.1:5173",
+			"http://localhost:3001",
+			"http://127.0.0.1:3001",
+		],
 		emailAndPassword: {
 			enabled: true,
 			autoSignIn: true,

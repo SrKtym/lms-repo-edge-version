@@ -2,7 +2,6 @@ import { coursesMaster } from "@lms-repo-edge-version/db/mock/course-master";
 import { DefaultButton } from "@lms-repo-edge-version/ui/components/button";
 import { InputForForm } from "@lms-repo-edge-version/ui/components/input";
 import { useForm } from "@tanstack/react-form";
-import { useRouter } from "@tanstack/react-router";
 import { z } from "zod";
 import { useRegisterStudentData } from "@/hooks/students";
 
@@ -21,8 +20,7 @@ export function CreateStudentDataForm() {
 		departments.push(...filteredDepartments);
 	});
 
-	const registerStudentData = useRegisterStudentData();
-	const router = useRouter();
+	const { mutateAsync: registerStudentData } = useRegisterStudentData();
 
 	const form = useForm({
 		defaultValues: {
@@ -30,8 +28,8 @@ export function CreateStudentDataForm() {
 			departmentName: "",
 		},
 		onSubmit: async ({ value }) => {
-			registerStudentData.mutate(value);
-			router.invalidate();
+			await registerStudentData(value);
+			location.reload();
 		},
 		validators: {
 			onSubmit: z.object({

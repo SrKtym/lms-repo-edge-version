@@ -11,7 +11,7 @@ import { useState } from "react";
 import { DAYS, getColorbyRequirements } from "../../lib/utils";
 import { OutlineButton } from "../button";
 import { CourseSelectionModal } from "../modals/course-selection-modal";
-import { LongPressMenu, useLongPress } from "../popover";
+import { LongPressPopover, useLongPress } from "../popover";
 import { BaseCard } from "./base-card";
 
 interface TimeTableCardProps {
@@ -267,7 +267,7 @@ export function TimeTableCard({
 			{/* 長押しメニュー */}
 			<AnimatePresence>
 				{longPressMenu && (
-					<LongPressMenu
+					<LongPressPopover
 						position={longPressMenu.position}
 						onEdit={() => {
 							onCellClick(longPressMenu.day, longPressMenu.period);

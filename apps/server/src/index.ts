@@ -14,7 +14,17 @@ const app = new Hono()
 		// グローバルミドルウェア
 		logger(),
 		cors({
-			origin: env.CORS_ORIGIN,
+			origin: (origin) => {
+				// 許可するオリジン
+				const allowedOrigins = [
+					env.CORS_ORIGIN,
+					"http://localhost:5173",
+					"http://127.0.0.1:5173",
+					"http://localhost:3001",
+					"http://127.0.0.1:3001",
+				];
+				return allowedOrigins.includes(origin) ? origin : null;
+			},
 			allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 			allowHeaders: ["Content-Type", "Authorization"],
 			credentials: true,
