@@ -97,7 +97,6 @@ function RouteComponent() {
 
 	// ページ変更時の処理
 	const handlePageChange = (page: number) => {
-		// setCurrentPage(page);
 		navigate({
 			to: "/notifications",
 			search: (prev) => ({
@@ -234,7 +233,7 @@ function RouteComponent() {
 				<div className="space-y-3">
 					<AnimatePresence mode="popLayout">
 						{filteredNotifications.length > 0 ? (
-							<>
+							<div className="flex flex-col space-y-3">
 								{filteredNotifications.map((notification, index) => (
 									<m.div
 										key={notification.id}
@@ -274,26 +273,6 @@ function RouteComponent() {
 													<p className="mt-2 text-gray-500 text-xs dark:text-gray-500">
 														{formatTimestamp(notification.createdAt)}
 													</p>
-													{/* {expandedNotifications.has(notification.id) && (
-														<m.div
-															initial={{ opacity: 0, height: 0 }}
-															animate={{ opacity: 1, height: "auto" }}
-															exit={{ opacity: 0, height: 0 }}
-															transition={{ duration: 0.2 }}
-															className="mt-3"
-														>
-															<m.button
-																whileHover={{ scale: 1.05 }}
-																whileTap={{ scale: 0.95 }}
-																onClick={(e) => {
-																	e.stopPropagation();
-																}}
-																className="rounded-lg bg-blue-500 px-3 py-1 font-medium text-sm text-white transition-colors hover:bg-blue-600"
-															>
-																テスト
-															</m.button>
-														</m.div>
-													)} */}
 												</div>
 											</div>
 											<m.button
@@ -317,7 +296,7 @@ function RouteComponent() {
 									itemsPerPage={limit}
 									onPageChange={handlePageChange}
 								/>
-							</>
+							</div>
 						) : (
 							<m.div
 								initial={{ opacity: 0 }}
