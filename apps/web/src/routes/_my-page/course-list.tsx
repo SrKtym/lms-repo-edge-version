@@ -48,13 +48,26 @@ export const Route = createFileRoute("/_my-page/course-list")({
 
 		return { courses, announcements, assignments, submission };
 	},
-	head: () => ({
-		meta: [
-			{
-				title: "講義一覧 | LMS-repo",
-			},
-		],
-	}),
+	head: ({ match }) => {
+		const courseName =
+			match.loaderData?.courses?.find(
+				({ id }) => id === match.search["course-id"],
+			)?.name || "講義一覧";
+
+		const assignmentTitle = match.loaderData?.assignments?.find(
+			({ id }) => id === match.search["assignment-id"],
+		)?.title;
+
+		const title = assignmentTitle ? ` - ${assignmentTitle}` : "";
+
+		return {
+			meta: [
+				{
+					title: `${courseName}${title} | LMS-repo`,
+				},
+			],
+		};
+	},
 });
 
 function RouteComponent() {
