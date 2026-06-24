@@ -18,16 +18,15 @@
 		"@lms-repo-edge-version/env": "workspace:*",
 		"react": "catalog:",
 		"react-dom": "catalog:",
-		"@react-email/components": "^1.0.12",
+		"react-email": "^6.6.0",
 		"resend": "^6.12.2"
 	},
 	"devDependencies": {
 		"@lms-repo-edge-version/config": "workspace:*",
+		"@react-email/ui": "6.6.0",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
 		"tailwindcss": "catalog:",
-		"typescript": "catalog:",
-		"react-email": "^6.5.0",
-		"@react-email/preview-server": "^5.2.10"
+		"typescript": "catalog:"
 	}
 }

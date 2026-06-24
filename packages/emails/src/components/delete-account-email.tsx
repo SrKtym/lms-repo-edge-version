@@ -1,4 +1,4 @@
-import { Text } from "@react-email/components";
+import { Text } from "react-email";
 import { BaseEmailTemplate } from "./base-email-template";
 
 export default function DeleteAccountEmail({
