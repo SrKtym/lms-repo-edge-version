@@ -29,6 +29,40 @@ const ALLOWED_MIME_TYPES = [
 	"application/vnd.openxmlformats-officedocument.presentationml.presentation",
 ];
 
+const signedUrlSchema = z
+	.array(
+		z.object({
+			fileName: z.string(),
+			fileType: z.string(),
+			fileSize: z
+				.number()
+				.max(MAX_FILE_SIZE, "ファイルサイズは10MB以下である必要があります"),
+		}),
+	)
+	.max(
+		MAX_FILE_COUNT,
+		`一度にアップロードできるファイルは${MAX_FILE_COUNT}個までです`,
+	);
+
+const metadataSchema = z.object({
+	metadataList: z
+		.array(
+			z.object({
+				objectName: z.string(),
+				originalName: z.string(),
+				mimeType: z.string(),
+				fileSize: z
+					.number()
+					.max(MAX_FILE_SIZE, "ファイルサイズは10MB以下である必要があります"),
+			}),
+		)
+		.max(
+			MAX_FILE_COUNT,
+			`一度にアップロードできるファイルは${MAX_FILE_COUNT}個までです`,
+		),
+	assignmentId: z.string(),
+});
+
 export const submissionsRoute = new Hono<{
 	Variables: {
 		user: Session["user"];
@@ -36,69 +70,57 @@ export const submissionsRoute = new Hono<{
 	};
 }>()
 	// 署名付きURL生成エンドポイント
-	.post(
-		"/signed_urls",
-		zValidator(
-			"json",
-			z.array(
-				z.object({
-					fileName: z.string(),
-					fileType: z.string(),
-				}),
-			),
-		),
-		async (c) => {
-			const files = c.req.valid("json");
+	.post("/signed_urls", zValidator("json", signedUrlSchema), async (c) => {
+		const files = c.req.valid("json");
 
-			// R2 API credentialsが設定されているか確認
-			if (
-				!env.R2_ACCESS_KEY_ID ||
-				!env.R2_SECRET_ACCESS_KEY ||
-				!env.R2_ACCOUNT_ID
-			) {
-				return c.json(
-					{
-						error: "R2 API credentials are not configured",
-					},
-					500,
-				);
-			}
-
-			// S3クライアントを初期化
-			const s3Client = new S3Client({
-				region: "auto",
-				endpoint: `https://${env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-				credentials: {
-					accessKeyId: env.R2_ACCESS_KEY_ID,
-					secretAccessKey: env.R2_SECRET_ACCESS_KEY,
+		// R2 API credentialsが設定されているか確認
+		if (
+			!env.R2_ACCESS_KEY_ID ||
+			!env.R2_SECRET_ACCESS_KEY ||
+			!env.R2_ACCOUNT_ID
+		) {
+			return c.json(
+				{
+					error: "R2 API credentials are not configured",
 				},
-			});
-
-			// 署名付きURLを一括生成
-			const signedUrls = await Promise.all(
-				files.map(async (file) => {
-					const key = `uploads/${file.fileName}`;
-					const command = new PutObjectCommand({
-						Bucket: "storage",
-						Key: key,
-						ContentType: file.fileType,
-					});
-
-					const signedUrl = await getSignedUrl(s3Client, command, {
-						expiresIn: 3600, // 1時間有効
-					});
-
-					return {
-						fileName: file.fileName,
-						signedUrl,
-						objectName: key,
-					};
-				}),
+				500,
 			);
+		}
 
-			return c.json(signedUrls);
-		},
-	)
+		// S3クライアントを初期化
+		const s3Client = new S3Client({
+			region: "auto",
+			endpoint: `https://${env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+			credentials: {
+				accessKeyId: env.R2_ACCESS_KEY_ID,
+				secretAccessKey: env.R2_SECRET_ACCESS_KEY,
+			},
+		});
+
+		// 署名付きURLを一括生成
+		const signedUrls = await Promise.all(
+			files.map(async (file) => {
+				const key = `uploads/${file.fileName}`;
+				const command = new PutObjectCommand({
+					Bucket: "storage",
+					Key: key,
+					ContentType: file.fileType,
+				});
+
+				const signedUrl = await getSignedUrl(s3Client, command, {
+					expiresIn: 3600, // 1時間有効
+				});
+
+				return {
+					fileName: file.fileName,
+					signedUrl,
+					objectName: key,
+				};
+			}),
+		);
+
+		return c.json(signedUrls);
+	})
 	// 直接アップロードエンドポイント
 	.post("/upload", async (c) => {
 		const formData = await c.req.formData();
@@ -126,74 +148,47 @@ export const submissionsRoute = new Hono<{
 		});
 	})
 	// ファイルメタデータの一括保存（複数ファイルアップロード用）
-	.post(
-		"/metadata",
-		zValidator(
-			"json",
-			z.object({
-				metadataList: z
-					.array(
-						z.object({
-							objectName: z.string(),
-							originalName: z.string(),
-							mimeType: z.string(),
-							fileSize: z
-								.number()
-								.max(
-									MAX_FILE_SIZE,
-									"ファイルサイズは10MB以下である必要があります",
-								),
-						}),
-					)
-					.max(
-						MAX_FILE_COUNT,
-						`一度にアップロードできるファイルは${MAX_FILE_COUNT}個までです`,
-					),
-				assignmentId: z.string(),
+	.post("/metadata", zValidator("json", metadataSchema), async (c) => {
+		const { userId } = c.get("session");
+		const { metadataList, assignmentId } = c.req.valid("json");
+
+		// MIMEタイプの検証
+		for (const metadata of metadataList) {
+			if (!ALLOWED_MIME_TYPES.includes(metadata.mimeType)) {
+				return c.json(
+					{
+						error: `許可されていないファイルタイプです: ${metadata.mimeType}`,
+						allowedTypes: ALLOWED_MIME_TYPES,
+					},
+					400,
+				);
+			}
+		}
+
+		// メタデータを一括保存
+		const results = await Promise.all(
+			metadataList.map(async (metadata) => {
+				const result = await createFileSubmissionMetadata({
+					bucket: "storage",
+					...metadata,
+					createdBy: userId,
+				});
+				return result;
 			}),
-		),
-		async (c) => {
-			const { userId } = c.get("session");
-			const { metadataList, assignmentId } = c.req.valid("json");
+		);
 
-			// MIMEタイプの検証
-			for (const metadata of metadataList) {
-				if (!ALLOWED_MIME_TYPES.includes(metadata.mimeType)) {
-					return c.json(
-						{
-							error: `許可されていないファイルタイプです: ${metadata.mimeType}`,
-							allowedTypes: ALLOWED_MIME_TYPES,
-						},
-						400,
-					);
-				}
-			}
+		// 提出状況を更新
+		const updateResult = await updateSubmissionStatus(
+			assignmentId,
+			userId,
+			"提出済み",
+		);
+		if (updateResult.status !== 200) {
+			return c.json(updateResult);
+		}
 
-			// メタデータを一括保存
-			const results = await Promise.all(
-				metadataList.map(async (metadata) => {
-					const result = await createFileSubmissionMetadata({
-						bucket: "storage",
-						...metadata,
-						createdBy: userId,
-					});
-					return result;
-				}),
-			);
-
-			// 提出状況を更新
-			const updateResult = await updateSubmissionStatus(
-				assignmentId,
-				userId,
-				"提出済み",
-			);
-			if (updateResult.status !== 200) {
-				return c.json(updateResult);
-			}
-
-			return c.json({ successCount: results.length, results }, 201);
-		},
-	)
+		return c.json({ successCount: results.length, results }, 201);
+	})
 	// 課題の提出（テキスト形式）
 	.post(
 		"/text",
