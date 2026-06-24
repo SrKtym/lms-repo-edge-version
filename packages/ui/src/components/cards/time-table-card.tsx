@@ -2,8 +2,9 @@ import type {
 	FetchCoursesReturnType,
 	FetchRegisteredCoursesReturnType,
 } from "@lms-repo-edge-version/db/utils/query/courses";
+import { MoreVertical } from "@lms-repo-edge-version/ui/assets/icons/more-vertical";
 import { Plus } from "@lms-repo-edge-version/ui/assets/icons/plus";
-import { MenuButton } from "@lms-repo-edge-version/ui/components/button";
+import { MenuActionButton } from "@lms-repo-edge-version/ui/components/button";
 import { useIsHoverCapable } from "@lms-repo-edge-version/ui/hooks/use-is-hover-capable";
 import { AnimatePresence } from "motion/react";
 import * as m from "motion/react-m";
@@ -12,6 +13,7 @@ import { DAYS, getColorbyRequirements } from "../../lib/utils";
 import { OutlineButton } from "../button";
 import { CourseSelectionModal } from "../modals/course-selection-modal";
 import { LongPressPopover, useLongPress } from "../popover";
+import { DefaultTooltip } from "../tooltip";
 import { BaseCard } from "./base-card";
 
 interface TimeTableCardProps {
@@ -80,13 +82,36 @@ function CourseCell({
 			</div>
 			{/* メニューボタン */}
 			<div className="absolute top-1 right-1 opacity-0 transition-opacity group-hover:opacity-100">
-				<MenuButton
-					onEdit={() => {
-						onCellClick(day, period);
-						setCurrentCell({ day, period });
-					}}
-					onDelete={() => onDeleteCourse(course.id)}
-				/>
+				<div className="flex flex-col gap-1">
+					<DefaultTooltip
+						triggerElement={
+							<MoreVertical
+								width={28}
+								height={28}
+								className="rounded-full p-1 text-foreground"
+							/>
+						}
+						content={
+							<div className="flex flex-col gap-1">
+								<MenuActionButton
+									type="edit"
+									onClick={(e) => {
+										e?.stopPropagation();
+										onCellClick?.(day, period);
+										setCurrentCell({ day, period });
+									}}
+								/>
+								<MenuActionButton
+									type="delete"
+									onClick={(e) => {
+										e?.stopPropagation();
+										onDeleteCourse(course.id);
+									}}
+								/>
+							</div>
+						}
+					/>
+				</div>
 			</div>
 		</m.div>
 	);

@@ -1,11 +1,13 @@
 import { ArrowLeft } from "@lms-repo-edge-version/ui/assets/icons/arrow-left";
 import { ArrowRight } from "@lms-repo-edge-version/ui/assets/icons/arrow-right";
-import { MenuButton } from "@lms-repo-edge-version/ui/components/button";
+import { MoreVertical } from "@lms-repo-edge-version/ui/assets/icons/more-vertical";
+import { MenuActionButton } from "@lms-repo-edge-version/ui/components/button";
 import { LazyMotionProvider } from "@lms-repo-edge-version/ui/components/lazymotion-provider";
 import {
 	LongPressPopover,
 	useLongPress,
 } from "@lms-repo-edge-version/ui/components/popover";
+import { DefaultTooltip } from "@lms-repo-edge-version/ui/components/tooltip";
 import { useIsHoverCapable } from "@lms-repo-edge-version/ui/hooks/use-is-hover-capable";
 import { DAYS } from "@lms-repo-edge-version/ui/lib/utils";
 import * as m from "motion/react-m";
@@ -76,10 +78,33 @@ function WeekEventItem({
 			<div className="truncate font-medium">
 				{event.title}
 				{event.type === "schedule" && (
-					<div className="absolute top-0 right-0 opacity-0 transition-opacity group-hover:opacity-100">
-						<MenuButton
-							onEdit={() => editSchedule?.(event.id)}
-							onDelete={() => deleteSchedule(event.id)}
+					<div className="absolute top-0 right-[-5px] opacity-0 transition-opacity group-hover:opacity-100">
+						<DefaultTooltip
+							triggerElement={
+								<MoreVertical
+									width={26}
+									height={26}
+									className="rounded-full p-1 text-white"
+								/>
+							}
+							content={
+								<div className="flex flex-col gap-1">
+									<MenuActionButton
+										type="edit"
+										onClick={(e) => {
+											e?.stopPropagation();
+											editSchedule?.(event.id);
+										}}
+									/>
+									<MenuActionButton
+										type="delete"
+										onClick={(e) => {
+											e?.stopPropagation();
+											deleteSchedule(event.id);
+										}}
+									/>
+								</div>
+							}
 						/>
 					</div>
 				)}
