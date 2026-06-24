@@ -8,6 +8,7 @@ export { cn, parseColor } from "@heroui/react";
 export {
 	DateFormatter,
 	type DateValue,
+	fromDateToLocal,
 	getLocalTimeZone,
 	now,
 	parseDate,

@@ -8,6 +8,15 @@ import {
 import { Hono } from "hono";
 import { z } from "zod";
 
+const formSchema = z.object({
+	grade: z
+		.number()
+		.int("対象学年は整数で入力してください")
+		.min(1, "対象学年は1から4の間で入力してください")
+		.max(4, "対象学年は1から4の間で入力してください"),
+	departmentName: z.string(),
+});
+
 // 学生関連のルート
 export const studentsRoute = new Hono<{
 	Variables: {
@@ -16,26 +25,12 @@ export const studentsRoute = new Hono<{
 	};
 }>()
 	// 学生の所属登録
-	.post(
-		"/",
-		zValidator(
-			"json",
-			z.object({
-				grade: z
-					.number()
-					.int("対象学年は整数で入力してください")
-					.min(1, "対象学年は1から4の間で入力してください")
-					.max(4, "対象学年は1から4の間で入力してください"),
-				departmentName: z.string(),
-			}),
-		),
-		async (c) => {
-			const { userId } = c.get("session");
-			const { grade, departmentName } = c.req.valid("json");
-			const result = await registerStudentData(userId, departmentName, grade);
-			return c.json(result);
-		},
-	)
+	.post("/", zValidator("json", formSchema), async (c) => {
+		const { userId } = c.get("session");
+		const { grade, departmentName } = c.req.valid("json");
+		const result = await registerStudentData(userId, departmentName, grade);
+		return c.json(result);
+	})
 	// 学生のデータ取得
 	.get("/data", async (c) => {
 		const { userId } = c.get("session");

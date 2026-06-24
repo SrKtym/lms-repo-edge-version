@@ -8,6 +8,7 @@ import { ColorSwatchPicker } from "@lms-repo-edge-version/ui/components/color-sw
 import { InputForForm } from "@lms-repo-edge-version/ui/components/input";
 import { ControlledModal } from "@lms-repo-edge-version/ui/components/modals/controlled-modal";
 import {
+	fromDateToLocal,
 	getLocalTimeZone,
 	now,
 	type ZonedDateTime,
@@ -28,6 +29,8 @@ export function CreateScheduleForm({
 	onOpenChange,
 }: CreateScheduleFormProps) {
 	const dateTime = now(getLocalTimeZone());
+	const start = initialData ? fromDateToLocal(initialData.startTime) : dateTime;
+	const end = initialData ? fromDateToLocal(initialData.endTime) : dateTime;
 	const { mutateAsync: createSchedule } = useCreateSchedule();
 	const isEditMode = !!initialData;
 
@@ -37,24 +40,8 @@ export function CreateScheduleForm({
 			title: initialData?.title || "",
 			description: initialData?.description || "",
 			timeSpan: {
-				start: initialData
-					? dateTime.set({
-							year: initialData.startTime.getFullYear(),
-							month: initialData.startTime.getMonth() + 1,
-							day: initialData.startTime.getDate(),
-							hour: initialData.startTime.getHours(),
-							minute: initialData.startTime.getMinutes(),
-						})
-					: dateTime,
-				end: initialData
-					? dateTime.set({
-							year: initialData.endTime.getFullYear(),
-							month: initialData.endTime.getMonth() + 1,
-							day: initialData.endTime.getDate(),
-							hour: initialData.endTime.getHours(),
-							minute: initialData.endTime.getMinutes(),
-						})
-					: dateTime,
+				start: start,
+				end: end,
 			},
 			theme: initialData?.theme || "#059669",
 		},
@@ -80,10 +67,17 @@ export function CreateScheduleForm({
 				id: z.string(),
 				title: z.string(),
 				description: z.string(),
-				timeSpan: z.object({
-					start: z.custom<ZonedDateTime>(),
-					end: z.custom<ZonedDateTime>(),
-				}),
+				timeSpan: z
+					.object({
+						start: z.custom<ZonedDateTime>(),
+						end: z.custom<ZonedDateTime>(),
+					})
+					.refine((v) => dateTime < v.start, {
+						error: "開始日時は現在時刻よりも後でなければなりません。",
+					})
+					.refine((v) => v.start < v.end, {
+						error: "開始日時は終了日時よりも前でなければなりません。",
+					}),
 				theme: z.string(),
 			}),
 		},
