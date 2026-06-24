@@ -8,17 +8,9 @@ import * as m from "motion/react-m";
 import { memo } from "react";
 import { BaseCard } from "../cards/base-card";
 
-// 小数時間
-const decimalHours = (date: Date | undefined | null) => {
-	if (!date) return 0;
-	const hours = date.getHours();
-	const minutes = date.getMinutes();
-	return hours + minutes / 60;
-};
-
 // 現在進行中であるかどうかを判定
 const isProgressingOrUpcoming = (start: Date, end: Date) => {
-	const now = new Date().getTime();
+	const now = Date.now();
 	const isProgressing = start.getTime() < now && end.getTime() > now;
 	const upcoming = now < start.getTime();
 
@@ -61,56 +53,15 @@ function DailySchedulesCardComponent({
 		end: schedule.endTime,
 	}));
 
-	// 重複する予定を検出する関数
-	const detectOverlappingSchedules = (schedules: any[]) => {
-		const groups: any[][] = [];
-		const processed = new Set<number>();
-
-		schedules.forEach((schedule, index) => {
-			if (processed.has(index)) return;
-
-			const group = [schedule];
-			processed.add(index);
-
-			schedules.forEach((otherSchedule, otherIndex) => {
-				if (index === otherIndex || processed.has(otherIndex)) return;
-
-				// 時間が重複しているかチェック
-				const scheduleStart = decimalHours(schedule.startTime);
-				const scheduleEnd = decimalHours(schedule.endTime);
-				const otherStart = decimalHours(otherSchedule.startTime);
-				const otherEnd = decimalHours(otherSchedule.endTime);
-
-				const isOverlapping =
-					(scheduleStart < otherEnd && scheduleEnd > otherStart) ||
-					(otherStart < scheduleEnd && otherEnd > scheduleStart);
-
-				if (isOverlapping) {
-					group.push(otherSchedule);
-					processed.add(otherIndex);
-				}
-			});
-
-			groups.push(group);
-		});
-
-		return groups;
-	};
-
-	// 重複を検出してグループ化
-	const courseGroups = detectOverlappingSchedules(todayCourse);
-	const scheduleGroups = detectOverlappingSchedules(todaySchedule);
-
 	// 講義用カードコンポーネント
 	const CourseScheduleCard = ({
-		group,
+		item,
 		index,
 	}: {
-		group: any[];
+		item: (typeof todayCourse)[number];
 		index: number;
 	}) => {
-		const firstItem = group[0];
-		const status = isProgressingOrUpcoming(firstItem.start, firstItem.end);
+		const status = isProgressingOrUpcoming(item.start, item.end);
 		const isPast = status === "past";
 		const isProgressing = status === "progressing";
 
@@ -140,30 +91,20 @@ function DailySchedulesCardComponent({
 											: "bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400",
 								)}
 							>
-								{firstItem.start.toLocaleTimeString("default", {
+								{item.start.toLocaleTimeString("default", {
 									hour: "2-digit",
 									minute: "2-digit",
 								})}{" "}
 								-{" "}
-								{firstItem.end.toLocaleTimeString("default", {
+								{item.end.toLocaleTimeString("default", {
 									hour: "2-digit",
 									minute: "2-digit",
 								})}
 							</span>
-							{group.length > 2 && (
-								<span className="rounded-full bg-orange-100 px-2 py-1 font-bold text-orange-700 text-xs dark:bg-orange-900 dark:text-orange-300">
-									+{group.length - 1}
-								</span>
-							)}
 						</div>
 						<h3 className="mb-1 font-semibold text-gray-900 dark:text-gray-100">
-							{firstItem.title}
+							{item.title}
 						</h3>
-						{group.length > 1 && (
-							<p className="text-gray-500 text-sm dark:text-gray-400">
-								他 {group.length - 1} 件の予定と重複
-							</p>
-						)}
 					</div>
 					{isProgressing && (
 						<m.div
@@ -178,9 +119,14 @@ function DailySchedulesCardComponent({
 	};
 
 	// 個人スケジュール用カードコンポーネント
-	const ScheduleCard = ({ group, index }: { group: any[]; index: number }) => {
-		const firstItem = group[0];
-		const status = isProgressingOrUpcoming(firstItem.start, firstItem.end);
+	const ScheduleCard = ({
+		item,
+		index,
+	}: {
+		item: (typeof todaySchedule)[number];
+		index: number;
+	}) => {
+		const status = isProgressingOrUpcoming(item.start, item.end);
 		const isPast = status === "past";
 		const isProgressing = status === "progressing";
 
@@ -214,33 +160,23 @@ function DailySchedulesCardComponent({
 											: "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400",
 								)}
 							>
-								{firstItem.start.toLocaleTimeString("default", {
+								{item.start.toLocaleTimeString("default", {
 									hour: "2-digit",
 									minute: "2-digit",
 								})}{" "}
 								-{" "}
-								{firstItem.end.toLocaleTimeString("default", {
+								{item.end.toLocaleTimeString("default", {
 									hour: "2-digit",
 									minute: "2-digit",
 								})}
 							</span>
-							{group.length > 2 && (
-								<span className="rounded-full bg-orange-100 px-2 py-1 font-bold text-orange-700 text-xs dark:bg-orange-900 dark:text-orange-300">
-									+{group.length - 1}
-								</span>
-							)}
 						</div>
 						<h3 className="mb-1 font-semibold text-gray-900 dark:text-gray-100">
-							{firstItem.title}
+							{item.title}
 						</h3>
-						{firstItem.description && (
+						{item.description && (
 							<p className="mb-2 text-gray-600 text-sm dark:text-gray-400">
-								{firstItem.description}
-							</p>
-						)}
-						{group.length > 1 && (
-							<p className="font-medium text-blue-600 text-sm dark:text-blue-400">
-								他 {group.length - 1} 件の予定と重複
+								{item.description}
 							</p>
 						)}
 					</div>
@@ -307,10 +243,10 @@ function DailySchedulesCardComponent({
 										講義
 									</h2>
 									<div className="space-y-3 lg:max-h-[240px] lg:overflow-y-auto">
-										{courseGroups.map((group, index) => (
+										{todayCourse.map((item, index) => (
 											<CourseScheduleCard
-												key={group[0].id}
-												group={group}
+												key={item.id}
+												item={item}
 												index={index}
 											/>
 										))}
@@ -334,12 +270,8 @@ function DailySchedulesCardComponent({
 										個人スケジュール
 									</h2>
 									<div className="space-y-3 lg:max-h-[240px] lg:overflow-y-auto">
-										{scheduleGroups.map((group, index) => (
-											<ScheduleCard
-												key={group[0].id}
-												group={group}
-												index={index}
-											/>
+										{todaySchedule.map((item, index) => (
+											<ScheduleCard key={item.id} item={item} index={index} />
 										))}
 									</div>
 								</m.div>
