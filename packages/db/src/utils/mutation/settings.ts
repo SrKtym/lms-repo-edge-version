@@ -21,7 +21,7 @@ export async function updateEmailNotificationSettings(
 				},
 			});
 		return { message: "メール通知設定を更新しました。", status: 200 };
-	} catch (error) {
+	} catch {
 		return { message: "メール通知設定の更新に失敗しました。", status: 500 };
 	}
 }

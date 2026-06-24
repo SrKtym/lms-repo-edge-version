@@ -17,8 +17,7 @@ export function AssignmentCard({
 
 	const isOverdue = assignment.dueDate < new Date();
 	const daysUntilDue = Math.ceil(
-		(assignment.dueDate.getTime() - new Date().getTime()) /
-			(1000 * 60 * 60 * 24),
+		(assignment.dueDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24),
 	);
 
 	return (

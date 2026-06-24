@@ -1,3 +1,4 @@
+import { Check } from "@lms-repo-edge-version/ui/assets/icons/check";
 import { DefaultButton } from "@lms-repo-edge-version/ui/components/button";
 import { LazyMotionProvider } from "@lms-repo-edge-version/ui/components/lazymotion-provider";
 import { DAYS } from "@lms-repo-edge-version/ui/lib/utils";
@@ -95,7 +96,7 @@ export function VideoTutorial() {
 												}}
 												className="w-full rounded-lg border border-gray-300 px-4 py-2 pr-10 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
 											/>
-											<svg
+											{/* <svg
 												className="absolute top-2.5 right-3 h-5 w-5 text-gray-400"
 												fill="none"
 												stroke="currentColor"
@@ -107,22 +108,21 @@ export function VideoTutorial() {
 													strokeWidth={2}
 													d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
 												/>
-											</svg>
+											</svg> */}
 										</div>
 										{searchQuery && (
 											<div className="max-h-40 overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-700">
 												{filteredCourses.length > 0 ? (
 													filteredCourses.map((course) => (
-														<div
+														<DefaultButton
 															key={course}
-															onClick={() => {
+															onPress={() => {
 																setSelectedCourse(course);
 																setCurrentStep(1);
 															}}
-															className="cursor-pointer px-4 py-2 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
 														>
 															{course}
-														</div>
+														</DefaultButton>
 													))
 												) : (
 													<div className="px-4 py-2 text-gray-500 dark:text-gray-400">
@@ -210,19 +210,7 @@ export function VideoTutorial() {
 										className="space-y-4 text-center"
 									>
 										<div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
-											<svg
-												className="h-8 w-8 text-green-600 dark:text-green-400"
-												fill="none"
-												stroke="currentColor"
-												viewBox="0 0 24 24"
-											>
-												<path
-													strokeLinecap="round"
-													strokeLinejoin="round"
-													strokeWidth={2}
-													d="M5 13l4 4L19 7"
-												/>
-											</svg>
+											<Check className="text-green-600 dark:text-green-400" />
 										</div>
 										<h3 className="font-semibold text-gray-900 text-lg dark:text-white">
 											登録完了！

@@ -49,7 +49,7 @@ export function FileUploaderCard({
 		const k = 1024;
 		const sizes = ["Bytes", "KB", "MB", "GB"];
 		const i = Math.floor(Math.log(bytes) / Math.log(k));
-		return Number.parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
+		return `${Number.parseFloat((bytes / k ** i).toFixed(2))} ${sizes[i]}`;
 	};
 
 	// ファイル選択時の処理
@@ -125,8 +125,9 @@ export function FileUploaderCard({
 				transition={{ duration: 0.3 }}
 				className={className}
 			>
-				<div
-					className={`relative cursor-pointer rounded-lg border-2 border-dashed transition-colors ${
+				<button
+					type="button"
+					className={`relative w-full cursor-pointer rounded-lg border-2 border-dashed bg-transparent p-0 transition-colors ${
 						isDragOver
 							? "border-blue-500 bg-blue-50 dark:bg-blue-950"
 							: "border-gray-300 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-500"
@@ -138,11 +139,13 @@ export function FileUploaderCard({
 						!disabled && document.getElementById("file-input")?.click()
 					}
 				>
-					<BaseCard className="border-0">
+					<BaseCard className="pointer-events-none border-0">
 						<Input
 							id="file-input"
 							type="file"
 							multiple
+							max={maxFiles}
+							size={maxSize}
 							accept={accept}
 							onChange={(e) => handleFileSelect(e.target.files)}
 							disabled={disabled}
@@ -169,7 +172,7 @@ export function FileUploaderCard({
 							</p>
 						</div>
 					</BaseCard>
-				</div>
+				</button>
 
 				{/* File list */}
 				<AnimatePresence>

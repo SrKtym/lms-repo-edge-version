@@ -14,7 +14,7 @@ export async function createCourses(coursesData: Courses) {
 	try {
 		await createDb().insert(courses).values(coursesData).onConflictDoNothing();
 		return { message: "講義の作成に成功しました。", status: 201 };
-	} catch (error) {
+	} catch {
 		return { message: "講義の作成に失敗しました。", status: 500 };
 	}
 }
@@ -198,7 +198,7 @@ export async function registerCourses(courseId: string, userId: string) {
 		});
 
 		return result;
-	} catch (error) {
+	} catch {
 		return { message: "講義の登録に失敗しました。", status: 500 };
 	}
 }
@@ -226,7 +226,7 @@ export async function checkCourse(userId: string) {
 		});
 
 		return { message: "登録講義の確定に成功しました。", status: 200 };
-	} catch (error) {
+	} catch {
 		return { message: "登録講義の確定に失敗しました。", status: 500 };
 	}
 }
@@ -243,7 +243,7 @@ export async function unregisterCourse(courseId: string, userId: string) {
 				),
 			);
 		return { message: "講義の登録解除に成功しました。", status: 200 };
-	} catch (error) {
+	} catch {
 		return { message: "講義の登録解除に失敗しました。", status: 500 };
 	}
 }

@@ -45,7 +45,6 @@ export function AssignmentDetailCard({
 
 				<div className="mb-6">
 					<div className="mb-1 flex items-center gap-2">
-						{/* CalendarClock icon placeholder */}
 						<span className="font-medium">期限</span>
 					</div>
 					<p className="ml-6 text-default-600">
@@ -55,21 +54,21 @@ export function AssignmentDetailCard({
 
 				<div className="mb-6">
 					<div className="mb-2 flex items-center gap-2">
-						{/* ArrowLeft icon placeholder */}
 						<span className="font-medium">説明</span>
 					</div>
-					<div className="prose prose-sm ml-6 max-w-none text-default-600">
-						<p className="whitespace-pre-line">
-							{targetAssignment.description}
-						</p>
-					</div>
+					<p className="ml-6 text-default-600">
+						{targetAssignment.description}
+					</p>
 				</div>
 
 				<div className="mb-6">
 					<div className="mb-2 flex items-center gap-2">
-						{/* PaperClip icon placeholder */}
 						<span className="font-medium">添付ファイル</span>
 					</div>
+					<p className="ml-6 text-default-600">
+						{/* ここに添付ファイルをダウンロードする機能を実装 */}
+						なし
+					</p>
 				</div>
 			</div>
 		</BaseCard>

@@ -21,10 +21,6 @@ export const notificationsRoute = new Hono<{
 		session: Session["session"];
 	};
 }>()
-	// 通知作成
-	.post("/", (c) => {
-		return c.json({ message: "notification created" }, 201);
-	})
 	// 通知取得
 	.get(
 		"/",

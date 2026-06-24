@@ -16,7 +16,7 @@ export function SubmissionsCard({
 }: SubmissionsCardProps) {
 	return (
 		<BaseCard className="border border-divider lg:h-full lg:max-h-[600px]">
-			<div className="p-2">
+			<div className="overflow-y-auto p-2">
 				<div className="flex items-center justify-between">
 					<h2 className="font-medium text-lg">
 						課題（{targetAssignment.title}）の提出

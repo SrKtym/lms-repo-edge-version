@@ -30,7 +30,7 @@ export async function registerStudentData(
 				.onConflictDoNothing();
 		});
 		return { message: "学生の所属登録に成功しました。", status: 201 };
-	} catch (error) {
+	} catch {
 		return { message: "学生の所属登録に失敗しました。", status: 500 };
 	}
 }

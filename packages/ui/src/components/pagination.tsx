@@ -25,22 +25,22 @@ export function DefaultPagination({
 		const maxVisiblePages = 5;
 
 		if (totalPages <= maxVisiblePages) {
-			Array.from({ length: totalPages }, (_, i) => i + 1).forEach((i) =>
-				pages.push(i),
-			);
+			Array.from({ length: totalPages }, (_, i) => i + 1).forEach((i) => {
+				pages.push(i);
+			});
 		} else {
 			if (currentPage <= 3) {
-				for (let i = 1; i <= 4; i++) {
+				Array.from({ length: 4 }, (_, i) => i + 1).forEach((i) => {
 					pages.push(i);
-				}
+				});
 				pages.push("ellipsis");
 				pages.push(totalPages);
 			} else if (currentPage >= totalPages - 2) {
 				pages.push(1);
 				pages.push("ellipsis");
-				for (let i = totalPages - 3; i <= totalPages; i++) {
+				Array.from({ length: 4 }, (_, i) => totalPages - 3 + i).forEach((i) => {
 					pages.push(i);
-				}
+				});
 			} else {
 				pages.push(1);
 				pages.push("ellipsis");

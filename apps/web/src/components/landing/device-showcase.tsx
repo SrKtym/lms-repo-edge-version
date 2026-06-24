@@ -75,12 +75,7 @@ export function DeviceShowcase() {
 									<div className="absolute top-0 right-0 left-0 h-6 bg-black/10 backdrop-blur-sm">
 										<div className="flex h-full items-center justify-between px-3">
 											<span className="font-medium text-xs">9:41</span>
-											<div className="flex items-center gap-1">
-												<div className="h-3 w-4 rounded-sm border border-gray-600">
-													<div className="m-0.5 h-2 w-3 rounded-sm bg-gray-600" />
-												</div>
-												<div className="h-1 w-1 rounded-full bg-gray-600" />
-											</div>
+											<div className="h-1 w-1 rounded-full bg-gray-600" />
 										</div>
 									</div>
 									{/* App content */}
@@ -128,16 +123,7 @@ export function DeviceShowcase() {
 									<div className="absolute top-0 right-0 left-0 h-6 bg-black/10 backdrop-blur-sm">
 										<div className="flex h-full items-center justify-between px-4">
 											<span className="font-medium text-xs">9:41</span>
-											<div className="flex items-center gap-1">
-												<svg
-													className="h-3 w-4"
-													fill="currentColor"
-													viewBox="0 0 24 24"
-												>
-													<path d="M2 17h20v2H2zm1.15-4.05L4 11.47l.85 1.48 1.3-.75-.85-1.48H7v-1.5H5.3l.85-1.48L4.85 7.21 4 8.69l-.85-1.48L2.3 8.69 1.45 7.21l-.85 1.48L1.3 10.21H0v1.5h1.3l-.85 1.48L1.3 14.69l.85-1.48 1.3.75.85-1.48z" />
-												</svg>
-												<div className="h-1 w-1 rounded-full bg-gray-600" />
-											</div>
+											<div className="h-1 w-1 rounded-full bg-gray-600" />
 										</div>
 									</div>
 									{/* App content */}
