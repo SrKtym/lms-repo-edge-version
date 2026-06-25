@@ -10,9 +10,9 @@ import { BaseCard } from "../cards/base-card";
 
 // 現在進行中であるかどうかを判定
 const isProgressingOrUpcoming = (start: Date, end: Date) => {
-	const now = Date.now();
-	const isProgressing = start.getTime() < now && end.getTime() > now;
-	const upcoming = now < start.getTime();
+	const now = new Date();
+	const isProgressing = start < now && end > now;
+	const upcoming = now < start;
 
 	if (isProgressing) {
 		return "progressing";
@@ -242,7 +242,7 @@ function DailySchedulesCardComponent({
 										<span className="h-2 w-2 rounded-full bg-blue-500" />
 										講義
 									</h2>
-									<div className="space-y-3 lg:max-h-[240px] lg:overflow-y-auto">
+									<div className="p-1 space-y-3 lg:max-h-[240px] lg:overflow-y-auto">
 										{todayCourse.map((item, index) => (
 											<CourseScheduleCard
 												key={item.id}
@@ -269,7 +269,7 @@ function DailySchedulesCardComponent({
 										<span className="h-2 w-2 rounded-full bg-green-500" />
 										個人スケジュール
 									</h2>
-									<div className="space-y-3 lg:max-h-[240px] lg:overflow-y-auto">
+									<div className="p-1 space-y-3 lg:max-h-[240px] lg:overflow-y-auto">
 										{todaySchedule.map((item, index) => (
 											<ScheduleCard key={item.id} item={item} index={index} />
 										))}
