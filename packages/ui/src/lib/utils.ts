@@ -69,20 +69,6 @@ export function getColorbyRequirements(requirements: string) {
 	}
 }
 
-// 通知の種類に基づくアイコン
-export const getNotificationIcon = (title: string) => {
-	if (title.includes("新しい課題")) {
-		return "📝";
-	}
-	if (title.includes("新しいお知らせ")) {
-		return "💬";
-	}
-	if (title.includes("システム")) {
-		return "⚙️";
-	}
-	return "📢";
-};
-
 // 通知受信からの経過時間
 export function formatTimestamp(date: Date) {
 	const now = new Date();
@@ -91,11 +77,18 @@ export function formatTimestamp(date: Date) {
 	const hours = Math.floor(diff / (1000 * 60 * 60));
 	const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-	if (minutes < 1) return "たった今";
-	if (minutes < 60) return `${minutes}分前`;
-	if (hours < 24) return `${hours}時間前`;
-	if (days < 7) return `${days}日前`;
-
+	if (minutes < 1) {
+		return "たった今";
+	}
+	if (minutes < 60) {
+		return `${minutes}分前`;
+	}
+	if (hours < 24) {
+		return `${hours}時間前`;
+	}
+	if (days < 7) {
+		return `${days}日前`;
+	}
 	return date.toLocaleDateString("ja-JP", {
 		month: "short",
 		day: "numeric",

@@ -15,7 +15,7 @@ export function Footer() {
 							</h3>
 							<p className="mb-4 text-gray-400 leading-relaxed">
 								大学生のための学習管理アプリケーション。
-								時間割を作成し、スケジュールを管理し、課題を処理します。
+								時間割の作成、スケジュール・課題の管理機能を提供します。
 							</p>
 						</div>
 					</div>
@@ -41,9 +41,9 @@ export function Footer() {
 
 				{/* Bottom Bar */}
 				<div className="mt-8 border-gray-800 border-t pt-8">
-					<div className="flex flex-col items-center justify-center gap-4 text-center text-gray-400 text-sm md:flex-row">
-						<p>&copy; 2026 LMS. All rights reserved.</p>
-					</div>
+					<p className="text-center text-gray-400 text-sm">
+						&copy; 2026 LMS. All rights reserved.
+					</p>
 				</div>
 			</div>
 		</footer>

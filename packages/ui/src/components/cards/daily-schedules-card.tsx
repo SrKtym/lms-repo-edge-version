@@ -242,7 +242,7 @@ function DailySchedulesCardComponent({
 										<span className="h-2 w-2 rounded-full bg-blue-500" />
 										講義
 									</h2>
-									<div className="p-1 space-y-3 lg:max-h-[240px] lg:overflow-y-auto">
+									<div className="space-y-3 p-1 lg:max-h-[240px] lg:overflow-y-auto">
 										{todayCourse.map((item, index) => (
 											<CourseScheduleCard
 												key={item.id}
@@ -269,7 +269,7 @@ function DailySchedulesCardComponent({
 										<span className="h-2 w-2 rounded-full bg-green-500" />
 										個人スケジュール
 									</h2>
-									<div className="p-1 space-y-3 lg:max-h-[240px] lg:overflow-y-auto">
+									<div className="space-y-3 p-1 lg:max-h-[240px] lg:overflow-y-auto">
 										{todaySchedule.map((item, index) => (
 											<ScheduleCard key={item.id} item={item} index={index} />
 										))}

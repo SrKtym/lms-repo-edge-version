@@ -42,9 +42,6 @@ export function NotificationsModal({
 							{/* Modal Header */}
 							<div className="flex items-center justify-between border-b p-6 dark:border-gray-700">
 								<div className="flex items-center gap-3">
-									{/* <span className="text-2xl">
-										{getNotificationIcon(notification.type)}
-									</span> */}
 									<div>
 										<h2 className="font-semibold text-gray-900 text-lg dark:text-gray-100">
 											{notification.title}

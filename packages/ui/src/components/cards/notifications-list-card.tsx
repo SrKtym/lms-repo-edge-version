@@ -2,10 +2,7 @@ import type { FetchNotificationsReturnType } from "@lms-repo-edge-version/db/uti
 import { BellAnimation } from "@lms-repo-edge-version/ui/assets/icons/bell-animation";
 import { Close } from "@lms-repo-edge-version/ui/assets/icons/close";
 import { useInfiniteScroll } from "@lms-repo-edge-version/ui/hooks/use-infinite-scroll";
-import {
-	formatTimestamp,
-	getNotificationIcon,
-} from "@lms-repo-edge-version/ui/lib/utils";
+import { formatTimestamp } from "@lms-repo-edge-version/ui/lib/utils";
 import {
 	AnimatePresence,
 	domAnimation,
@@ -122,9 +119,6 @@ export function NotificationsListCard({
 												}}
 											>
 												<div className="flex items-start gap-3">
-													<span className="mt-1 flex-shrink-0 text-base">
-														{getNotificationIcon(notification.title)}
-													</span>
 													<div className="min-w-0 flex-1">
 														<div className="mb-1 flex items-center justify-between gap-2">
 															<h3 className="truncate font-medium text-gray-900 text-xs dark:text-gray-100">

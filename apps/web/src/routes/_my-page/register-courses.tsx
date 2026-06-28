@@ -189,12 +189,12 @@ function RouteComponent() {
 													</div>
 													<div className="flex justify-end gap-2">
 														<CancelButton
-															onClick={() => setIsConfirmModalOpen(false)}
+															onPress={() => setIsConfirmModalOpen(false)}
 														>
 															キャンセル
 														</CancelButton>
 														<DefaultButton
-															onClick={() => {
+															onPress={() => {
 																handleCheckCourse();
 																setIsConfirmModalOpen(false);
 															}}

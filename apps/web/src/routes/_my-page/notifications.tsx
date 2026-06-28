@@ -9,10 +9,7 @@ import {
 import { LazyMotionProvider } from "@lms-repo-edge-version/ui/components/lazymotion-provider";
 import { DefaultPagination } from "@lms-repo-edge-version/ui/components/pagination";
 import { DefaultSelect } from "@lms-repo-edge-version/ui/components/select";
-import {
-	formatTimestamp,
-	getNotificationIcon,
-} from "@lms-repo-edge-version/ui/lib/utils";
+import { formatTimestamp } from "@lms-repo-edge-version/ui/lib/utils";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AnimatePresence } from "motion/react";
 import * as m from "motion/react-m";
@@ -255,9 +252,6 @@ function RouteComponent() {
 									>
 										<div className="flex items-start justify-between">
 											<div className="flex items-start space-x-3">
-												<div className="rounded-full px-2 pb-1">
-													{getNotificationIcon(notification.title)}
-												</div>
 												<div className="flex-1">
 													<div className="flex items-center space-x-2">
 														<h3 className="font-semibold text-gray-900 dark:text-white">

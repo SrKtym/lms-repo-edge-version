@@ -15,16 +15,25 @@ export function TypewriterText({
 	useEffect(() => {
 		const currentText = texts[currentStringIndex];
 		const handleTyping = () => {
-			if (!currentText) return;
+			if (!currentText) {
+				return;
+			}
+			// 入力モード時: 文字を追加
 			if (!isDeleting && currentIndex < currentText.length) {
 				setDisplayedText(currentText.slice(0, currentIndex + 1));
 				setCurrentIndex(currentIndex + 1);
-			} else if (isDeleting && currentIndex > 0) {
+			}
+			// 削除モード時: 文字を削除
+			else if (isDeleting && currentIndex > 0) {
 				setDisplayedText(currentText.slice(0, currentIndex - 1));
 				setCurrentIndex(currentIndex - 1);
-			} else if (currentIndex === currentText.length && !isDeleting) {
+			}
+			// 文字列入力完了時: 削除モードに切り替え(2秒待機)
+			else if (currentIndex === currentText.length && !isDeleting) {
 				setTimeout(() => setIsDeleting(true), 2000);
-			} else if (currentIndex === 0 && isDeleting) {
+			}
+			// 文字列削除完了時: 次の文字列に切り替え
+			else if (currentIndex === 0 && isDeleting) {
 				setIsDeleting(false);
 				setCurrentStringIndex((prev) => (prev + 1) % texts.length);
 			}

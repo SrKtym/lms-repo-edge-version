@@ -25,7 +25,8 @@ export const Route = createRootRouteWithContext()({
 			},
 			{
 				name: "description",
-				content: "LMS-repo is a web application",
+				content:
+					"LMS-repoは大学生のための学習管理アプリケーションです。 時間割の作成、スケジュール・課題の管理機能を提供します。",
 			},
 		],
 		links: [

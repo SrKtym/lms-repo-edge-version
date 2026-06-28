@@ -33,7 +33,7 @@ export function HeroSection({ children }: HeroSectionProps) {
 						className="mb-8"
 					>
 						<div className="mb-8 inline-flex items-center rounded-full bg-blue-100 px-4 py-2 font-medium text-blue-800 text-sm dark:bg-blue-900 dark:text-blue-200">
-							🎓 新しい学習体験へ
+							新しい学習体験へ
 						</div>
 					</motion.div>
 

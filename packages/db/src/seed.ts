@@ -6,8 +6,9 @@ const __dirname = dirname(__filename);
 
 import dotenv from "dotenv";
 
+const env = process.env.NODE_ENV || "development";
 const envResult = dotenv.config({
-	path: join(__dirname, "../../../apps/server/.env.development"),
+	path: join(__dirname, `../../../apps/server/.env.${env}`),
 });
 
 if (envResult.error) {
