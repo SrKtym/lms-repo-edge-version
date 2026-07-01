@@ -93,7 +93,7 @@ export const useSubmitMultipleFiles = () => {
 				throw new Error("署名付きURLの取得に失敗しました");
 			}
 
-			// 2. Cloud Storageにファイルを並列アップロード
+			// 2. Cloud Storage（R2）にファイルを並列アップロード
 			const uploadPromises = signedUrls.map(
 				async (item: {
 					fileName: string;
