@@ -61,7 +61,10 @@ export function CreateFileSubmissionForm({
 			}
 		} catch (error) {
 			toast.danger("ダウンロードに失敗しました", {
-				description: error instanceof Error ? error.message : "予期しないエラーが発生しました",
+				description:
+					error instanceof Error
+						? error.message
+						: "予期しないエラーが発生しました",
 			});
 		}
 	};
@@ -130,15 +133,17 @@ export function CreateFileSubmissionForm({
 			} else {
 				// アップロード完了したファイルをUUID付きで追加
 				const uploadedFiles = (res as any).files || [];
-				const convertedFiles: UploadedFile[] = uploadedFiles.map((file: any) => ({
-					id: file.id,
-					name: file.originalName,
-					size: file.fileSize,
-					type: file.mimeType,
-					url: undefined,
-					objectName: file.objectName,
-					uploadProgress: 100,
-				}));
+				const convertedFiles: UploadedFile[] = uploadedFiles.map(
+					(file: any) => ({
+						id: file.id,
+						name: file.originalName,
+						size: file.fileSize,
+						type: file.mimeType,
+						url: undefined,
+						objectName: file.objectName,
+						uploadProgress: 100,
+					}),
+				);
 				setUploadedFiles((prev) => [...prev, ...convertedFiles]);
 			}
 		} catch {

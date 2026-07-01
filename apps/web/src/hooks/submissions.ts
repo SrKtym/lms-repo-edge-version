@@ -176,19 +176,18 @@ export const useDownloadUrl = () => {
 				const blob = await res.blob();
 				const url = window.URL.createObjectURL(blob);
 				return { url, isDirect: true };
-			} else {
-				// 本番環境：署名付きURLを使用
-				const res = await client.api.submissions.download_url.$post({
-					json: { objectName },
-				});
-				const data = await res.json();
-
-				if ("error" in data) {
-					throw new Error(data.error);
-				}
-
-				return { url: data.signedUrl, isDirect: false };
 			}
+			// 本番環境：署名付きURLを使用
+			const res = await client.api.submissions.download_url.$post({
+				json: { objectName },
+			});
+			const data = await res.json();
+
+			if ("error" in data) {
+				throw new Error(data.error);
+			}
+
+			return { url: data.signedUrl, isDirect: false };
 		},
 	});
 };
