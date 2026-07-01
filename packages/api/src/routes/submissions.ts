@@ -1,4 +1,8 @@
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+	GetObjectCommand,
+	PutObjectCommand,
+	S3Client,
+} from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { zValidator } from "@hono/zod-validator";
 import type { Session } from "@lms-repo-edge-version/auth/server";
@@ -6,9 +10,12 @@ import type { TextSubmissions } from "@lms-repo-edge-version/db/types";
 import {
 	createFileSubmissionMetadata,
 	createTextSubmission,
+	deleteFileSubmissionMetadata,
 	updateSubmissionStatus,
 } from "@lms-repo-edge-version/db/utils/mutation/submissions";
 import {
+	fetchFileSubmissionById,
+	fetchFileSubmissionsByUser,
 	fetchSubmissionById,
 	fetchSubmissionsFromUserCourses,
 } from "@lms-repo-edge-version/db/utils/query/submissions";
@@ -29,40 +36,6 @@ const ALLOWED_MIME_TYPES = [
 	"application/vnd.openxmlformats-officedocument.presentationml.presentation",
 ];
 
-const signedUrlSchema = z
-	.array(
-		z.object({
-			fileName: z.string(),
-			fileType: z.string(),
-			fileSize: z
-				.number()
-				.max(MAX_FILE_SIZE, "ファイルサイズは10MB以下である必要があります"),
-		}),
-	)
-	.max(
-		MAX_FILE_COUNT,
-		`一度にアップロードできるファイルは${MAX_FILE_COUNT}個までです`,
-	);
-
-const metadataSchema = z.object({
-	metadataList: z
-		.array(
-			z.object({
-				objectName: z.string(),
-				originalName: z.string(),
-				mimeType: z.string(),
-				fileSize: z
-					.number()
-					.max(MAX_FILE_SIZE, "ファイルサイズは10MB以下である必要があります"),
-			}),
-		)
-		.max(
-			MAX_FILE_COUNT,
-			`一度にアップロードできるファイルは${MAX_FILE_COUNT}個までです`,
-		),
-	assignmentId: z.string(),
-});
-
 export const submissionsRoute = new Hono<{
 	Variables: {
 		user: Session["user"];
@@ -70,57 +43,69 @@ export const submissionsRoute = new Hono<{
 	};
 }>()
 	// 署名付きURL生成エンドポイント
-	.post("/signed_urls", zValidator("json", signedUrlSchema), async (c) => {
-		const files = c.req.valid("json");
+	.post(
+		"/signed_urls",
+		zValidator(
+			"json",
+			z.array(
+				z.object({
+					fileName: z.string(),
+					fileType: z.string(),
+				}),
+			),
+		),
+		async (c) => {
+			const files = c.req.valid("json");
 
-		// R2 API credentialsが設定されているか確認
-		if (
-			!env.R2_ACCESS_KEY_ID ||
-			!env.R2_SECRET_ACCESS_KEY ||
-			!env.R2_ACCOUNT_ID
-		) {
-			return c.json(
-				{
-					error: "R2 API credentials are not configured",
+			// R2 API credentialsが設定されているか確認
+			if (
+				!env.R2_ACCESS_KEY_ID ||
+				!env.R2_SECRET_ACCESS_KEY ||
+				!env.R2_ACCOUNT_ID
+			) {
+				return c.json(
+					{
+						error: "R2 API credentials are not configured",
+					},
+					500,
+				);
+			}
+
+			// S3クライアントを初期化
+			const s3Client = new S3Client({
+				region: "auto",
+				endpoint: `https://${env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+				credentials: {
+					accessKeyId: env.R2_ACCESS_KEY_ID,
+					secretAccessKey: env.R2_SECRET_ACCESS_KEY,
 				},
-				500,
+			});
+
+			// 署名付きURLを一括生成
+			const signedUrls = await Promise.all(
+				files.map(async (file) => {
+					const key = `uploads/${file.fileName}`;
+					const command = new PutObjectCommand({
+						Bucket: "storage",
+						Key: key,
+						ContentType: file.fileType,
+					});
+
+					const signedUrl = await getSignedUrl(s3Client, command, {
+						expiresIn: 3600, // 1時間有効
+					});
+
+					return {
+						fileName: file.fileName,
+						signedUrl,
+						objectName: key,
+					};
+				}),
 			);
-		}
 
-		// S3クライアントを初期化
-		const s3Client = new S3Client({
-			region: "auto",
-			endpoint: `https://${env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-			credentials: {
-				accessKeyId: env.R2_ACCESS_KEY_ID,
-				secretAccessKey: env.R2_SECRET_ACCESS_KEY,
-			},
-		});
-
-		// 署名付きURLを一括生成
-		const signedUrls = await Promise.all(
-			files.map(async (file) => {
-				const key = `uploads/${file.fileName}`;
-				const command = new PutObjectCommand({
-					Bucket: "storage",
-					Key: key,
-					ContentType: file.fileType,
-				});
-
-				const signedUrl = await getSignedUrl(s3Client, command, {
-					expiresIn: 3600, // 1時間有効
-				});
-
-				return {
-					fileName: file.fileName,
-					signedUrl,
-					objectName: key,
-				};
-			}),
-		);
-
-		return c.json(signedUrls);
-	})
+			return c.json(signedUrls);
+		},
+	)
 	// 直接アップロードエンドポイント
 	.post("/upload", async (c) => {
 		const formData = await c.req.formData();
@@ -148,44 +133,70 @@ export const submissionsRoute = new Hono<{
 		});
 	})
 	// ファイルメタデータの一括保存（複数ファイルアップロード用）
-	.post("/metadata", zValidator("json", metadataSchema), async (c) => {
-		const { userId } = c.get("session");
-		const { metadataList, assignmentId } = c.req.valid("json");
-
-		// MIMEタイプの検証
-		for (const metadata of metadataList) {
-			if (!ALLOWED_MIME_TYPES.includes(metadata.mimeType)) {
-				return c.json(
-					{
-						error: `許可されていないファイルタイプです: ${metadata.mimeType}`,
-						allowedTypes: ALLOWED_MIME_TYPES,
-					},
-					400,
-				);
-			}
-		}
-
-		// メタデータを一括保存
-		const results = await Promise.all(
-			metadataList.map(async (metadata) => {
-				const result = await createFileSubmissionMetadata({
-					bucket: "storage",
-					...metadata,
-					createdBy: userId,
-				});
-				return result;
+	.post(
+		"/metadata",
+		zValidator(
+			"json",
+			z.object({
+				metadataList: z
+					.array(
+						z.object({
+							objectName: z.string(),
+							originalName: z.string(),
+							mimeType: z.string(),
+							fileSize: z
+								.number()
+								.max(
+									MAX_FILE_SIZE,
+									"ファイルサイズは10MB以下である必要があります",
+								),
+						}),
+					)
+					.max(
+						MAX_FILE_COUNT,
+						`一度にアップロードできるファイルは${MAX_FILE_COUNT}個までです`,
+					),
+				assignmentId: z.string(),
 			}),
-		);
+		),
+		async (c) => {
+			const { userId } = c.get("session");
+			const { metadataList, assignmentId } = c.req.valid("json");
 
-		// 提出状況を更新
-		const updateResult = await updateSubmissionStatus(
-			assignmentId,
-			userId,
-			"提出済み",
-		);
-		if (updateResult.status !== 200) {
-			return c.json(updateResult);
-		}
+			// MIMEタイプの検証
+			for (const metadata of metadataList) {
+				if (!ALLOWED_MIME_TYPES.includes(metadata.mimeType)) {
+					return c.json(
+						{
+							error: `許可されていないファイルタイプです: ${metadata.mimeType}`,
+							allowedTypes: ALLOWED_MIME_TYPES,
+						},
+						400,
+					);
+				}
+			}
+
+			// メタデータを一括保存
+			const results = await Promise.all(
+				metadataList.map(async (metadata) => {
+					const result = await createFileSubmissionMetadata({
+						bucket: "storage",
+						...metadata,
+						createdBy: userId,
+					});
+					return result;
+				}),
+			);
+
+			// 提出状況を更新
+			const updateResult = await updateSubmissionStatus(
+				assignmentId,
+				userId,
+				"提出済み",
+			);
+			if (updateResult.status !== 200) {
+				return c.json(updateResult);
+			}
 
 		// 保存したメタデータを返す（UUIDを含む）
 		const savedMetadata = await fetchFileSubmissionsByUser(userId);
@@ -223,4 +234,86 @@ export const submissionsRoute = new Hono<{
 		const assignmentId = c.req.param("assignmentId");
 		const submission = await fetchSubmissionById(userId, assignmentId);
 		return c.json(submission, 200);
+	})
+	// ユーザーのファイル提出メタデータを取得
+	.get("/files", async (c) => {
+		const { userId } = c.get("session");
+		const files = await fetchFileSubmissionsByUser(userId);
+		return c.json(files, 200);
+	})
+	// ファイルダウンロード用の署名付きURLを取得
+	.post("/download_url", async (c) => {
+		const { objectName } = await c.req.json();
+
+		if (
+			!env.R2_ACCESS_KEY_ID ||
+			!env.R2_SECRET_ACCESS_KEY ||
+			!env.R2_ACCOUNT_ID
+		) {
+			return c.json({ error: "R2 credentials not configured" }, 500);
+		}
+
+		const s3Client = new S3Client({
+			region: "auto",
+			endpoint: `https://${env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+			credentials: {
+				accessKeyId: env.R2_ACCESS_KEY_ID,
+				secretAccessKey: env.R2_SECRET_ACCESS_KEY,
+			},
+		});
+
+		const command = new GetObjectCommand({
+			Bucket: "storage",
+			Key: objectName,
+		});
+
+		const signedUrl = await getSignedUrl(s3Client, command, {
+			expiresIn: 3600,
+		});
+
+		return c.json({ signedUrl });
+	})
+	// ファイルダウンロード（開発環境用）
+	.get("/download", async (c) => {
+		const objectName = c.req.query("objectName");
+		if (!objectName) {
+			return c.json({ error: "Missing objectName parameter" }, 400);
+		}
+
+		const object = await env.STORAGE_BUCKET.get(objectName);
+		if (!object) {
+			return c.json({ error: "File not found" }, 404);
+		}
+
+		const headers = new Headers();
+		object.writeHttpMetadata(headers);
+		headers.set("etag", object.httpEtag);
+
+		return new Response(object.body, { headers });
+	})
+	// ファイル削除
+	.delete("/:fileId", async (c) => {
+		const fileId = c.req.param("fileId");
+
+		// ファイルメタデータを取得
+		const file = await fetchFileSubmissionById(fileId);
+
+		if (!file) {
+			return c.json({ error: "File not found" }, 404);
+		}
+
+		// ストレージからファイルを削除
+		try {
+			await env.STORAGE_BUCKET.delete(file.objectName);
+		} catch (error) {
+			console.error("Failed to delete file from storage:", error);
+		}
+
+		// データベースからメタデータを削除
+		const result = await deleteFileSubmissionMetadata(fileId);
+
+		if (result.status === 200) {
+			return c.json({ message: result.message }, 200);
+		}
+		return c.json({ error: result.message }, 500);
 	});
