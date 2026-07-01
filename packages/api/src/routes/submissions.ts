@@ -198,14 +198,18 @@ export const submissionsRoute = new Hono<{
 				return c.json(updateResult);
 			}
 
-		// 保存したメタデータを返す（UUIDを含む）
-		const savedMetadata = await fetchFileSubmissionsByUser(userId);
-		const uploadedFiles = savedMetadata.filter((m) =>
-			metadataList.some((meta) => meta.objectName === m.objectName),
-		);
+			// 保存したメタデータを返す（UUIDを含む）
+			const savedMetadata = await fetchFileSubmissionsByUser(userId);
+			const uploadedFiles = savedMetadata.filter((m) =>
+				metadataList.some((meta) => meta.objectName === m.objectName),
+			);
 
-		return c.json({ successCount: results.length, results, files: uploadedFiles }, 201);
-	})
+			return c.json(
+				{ successCount: results.length, results, files: uploadedFiles },
+				201,
+			);
+		},
+	)
 	// 課題の提出（テキスト形式）
 	.post(
 		"/text",
