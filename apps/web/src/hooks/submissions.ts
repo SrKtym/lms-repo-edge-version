@@ -123,3 +123,68 @@ export const useSubmitMultipleFiles = () => {
 		},
 	});
 };
+
+// ユーザーのファイル提出メタデータを取得
+export const useFileSubmissions = () => {
+	return useQuery({
+		queryKey: ["file-submissions"],
+		queryFn: async () => {
+			const res = await client.api.submissions.files.$get();
+			return res.json();
+		},
+	});
+};
+
+// ファイルダウンロード用の署名付きURLを取得
+export const useDownloadUrl = () => {
+	return useMutation({
+		mutationFn: async (objectName: string) => {
+			const isDev = import.meta.env.DEV;
+
+			if (isDev) {
+				// 開発環境：直接ダウンロードエンドポイントを使用
+				const res = await fetch(
+					`http://localhost:3000/api/submissions/download?objectName=${encodeURIComponent(objectName)}`,
+					{
+						credentials: "include",
+					},
+				);
+
+				if (!res.ok) {
+					throw new Error("ファイルのダウンロードに失敗しました");
+				}
+
+				const blob = await res.blob();
+				const url = window.URL.createObjectURL(blob);
+				return { url, isDirect: true };
+			} else {
+				// 本番環境：署名付きURLを使用
+				const res = await client.api.submissions.download_url.$post({
+					json: { objectName },
+				});
+				const data = await res.json();
+
+				if ("error" in data) {
+					throw new Error(data.error);
+				}
+
+				return { url: data.signedUrl, isDirect: false };
+			}
+		},
+	});
+};
+
+// ファイル削除
+export const useDeleteFile = () => {
+	return useMutation({
+		mutationFn: async (fileId: string) => {
+			const res = await client.api.submissions[":fileId"].$delete({
+				param: { fileId },
+			});
+			return res.json();
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["file-submissions"] });
+		},
+	});
+};
