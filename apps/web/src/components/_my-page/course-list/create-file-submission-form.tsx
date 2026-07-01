@@ -2,13 +2,14 @@ import {
 	FileUploaderCard,
 	type UploadedFile,
 } from "@lms-repo-edge-version/ui/components/cards/file-uploader-card";
-import { useState } from "react";
-import { useSubmitMultipleFiles } from "@/hooks/submissions";
-
-interface CreateFileSubmissionFormProps {
-	assignmentId: string;
-	onSubmitSuccess?: () => void;
-}
+import { toast } from "@lms-repo-edge-version/ui/components/toast";
+import { useEffect, useState } from "react";
+import {
+	useDeleteFile,
+	useDownloadUrl,
+	useFileSubmissions,
+	useSubmitMultipleFiles,
+} from "@/hooks/submissions";
 
 export function CreateFileSubmissionForm({
 	assignmentId,
@@ -100,7 +101,9 @@ export function CreateFileSubmissionForm({
 		}
 
 		// 新規ファイルのみをフィルタリング
-		const newFiles = files.filter((file) => !uploadedFileNames.has(file.name));
+		const newFiles = files.filter(
+			(file) => !uploadedFiles.some((f) => f.name === file.name),
+		);
 
 		if (newFiles.length === 0) {
 			return;
@@ -111,10 +114,9 @@ export function CreateFileSubmissionForm({
 			return new File([file.name], file.name, { type: file.type });
 		});
 
-		setIsPending(true);
-
 		try {
-			submitMultipleFiles({
+			// アップロード処理
+			const res = await submitMultipleFiles({
 				files: fileObjects,
 				assignmentId,
 			});
@@ -150,10 +152,10 @@ export function CreateFileSubmissionForm({
 	return (
 		<div className="space-y-4">
 			<FileUploaderCard
-				maxFiles={5}
-				maxSize={10}
-				accept={allowedType}
+				uploadedFiles={uploadedFiles}
 				onFilesChange={onFilesChange}
+				onDownload={handleDownload}
+				onDelete={handleDelete}
 				disabled={isPending}
 			/>
 			{isPending && (
