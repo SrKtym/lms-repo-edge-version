@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { client } from "@/lib/hono-client";
 import { queryClient } from "@/lib/query-client";
 
@@ -59,10 +59,19 @@ export const useSubmitMultipleFiles = () => {
 
 				const uploadedMetadata = await Promise.all(uploadPromises);
 
+				if (!Array.isArray(uploadedMetadata)) {
+					throw new Error("ファイルのアップロードに失敗しました");
+				}
+
 				// メタデータを一括保存
 				const metadataRes = await client.api.submissions.metadata.$post({
 					json: {
-						metadataList: uploadedMetadata,
+						metadataList: uploadedMetadata as Array<{
+							objectName: string;
+							originalName: string;
+							mimeType: string;
+							fileSize: number;
+						}>,
 						assignmentId,
 					},
 				});
@@ -75,13 +84,23 @@ export const useSubmitMultipleFiles = () => {
 				json: files.map((file) => ({
 					fileName: file.name,
 					fileType: file.type,
+					fileSize: file.size,
 				})),
 			});
 			const signedUrls = await signedUrlsRes.json();
 
+			if (!Array.isArray(signedUrls)) {
+				throw new Error("署名付きURLの取得に失敗しました");
+			}
+
 			// 2. Cloud Storage（R2）にファイルを並列アップロード
 			const uploadPromises = signedUrls.map(
-				async ({ fileName, signedUrl, objectName }) => {
+				async (item: {
+					fileName: string;
+					signedUrl: string;
+					objectName: string;
+				}) => {
+					const { fileName, signedUrl, objectName } = item;
 					const file = files.find((f) => f.name === fileName);
 					if (!file) throw new Error(`ファイル ${fileName} が見つかりません`);
 
