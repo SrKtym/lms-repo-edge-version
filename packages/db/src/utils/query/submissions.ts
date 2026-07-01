@@ -1,6 +1,11 @@
 import { and, eq } from "drizzle-orm";
 import { createDb } from "../../index";
-import { assignments, registration, submissionStatus } from "../../schema";
+import {
+	assignments,
+	fileSubmissionsMetadata,
+	registration,
+	submissionStatus,
+} from "../../schema";
 
 // ユーザーが登録している講義の課題提出状況を取得
 export async function fetchSubmissionsFromUserCourses(userId: string) {
@@ -46,4 +51,44 @@ export async function fetchSubmissionById(
 
 export type FetchSubmissionByIdReturnType = Awaited<
 	ReturnType<typeof fetchSubmissionById>
+>;
+
+// ユーザーのファイル提出メタデータを取得
+export async function fetchFileSubmissionsByUser(userId: string) {
+	const files = await createDb()
+		.select({
+			id: fileSubmissionsMetadata.id,
+			bucket: fileSubmissionsMetadata.bucket,
+			objectName: fileSubmissionsMetadata.objectName,
+			originalName: fileSubmissionsMetadata.originalName,
+			mimeType: fileSubmissionsMetadata.mimeType,
+			fileSize: fileSubmissionsMetadata.fileSize,
+			createdAt: fileSubmissionsMetadata.createdAt,
+		})
+		.from(fileSubmissionsMetadata)
+		.where(eq(fileSubmissionsMetadata.createdBy, userId));
+
+	return files;
+}
+
+export type FetchFileSubmissionsByUserReturnType = Awaited<
+	ReturnType<typeof fetchFileSubmissionsByUser>
+>;
+
+// ファイルIDでファイルメタデータを取得
+export async function fetchFileSubmissionById(fileId: string) {
+	const [file] = await createDb()
+		.select({
+			objectName: fileSubmissionsMetadata.objectName,
+			bucket: fileSubmissionsMetadata.bucket,
+		})
+		.from(fileSubmissionsMetadata)
+		.where(eq(fileSubmissionsMetadata.id, fileId))
+		.limit(1);
+
+	return file;
+}
+
+export type FetchFileSubmissionByIdReturnType = Awaited<
+	ReturnType<typeof fetchFileSubmissionById>
 >;

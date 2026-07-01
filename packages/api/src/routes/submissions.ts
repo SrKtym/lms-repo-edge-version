@@ -1,4 +1,8 @@
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+	GetObjectCommand,
+	PutObjectCommand,
+	S3Client,
+} from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { zValidator } from "@hono/zod-validator";
 import type { Session } from "@lms-repo-edge-version/auth/server";
@@ -6,9 +10,12 @@ import type { TextSubmissions } from "@lms-repo-edge-version/db/types";
 import {
 	createFileSubmissionMetadata,
 	createTextSubmission,
+	deleteFileSubmissionMetadata,
 	updateSubmissionStatus,
 } from "@lms-repo-edge-version/db/utils/mutation/submissions";
 import {
+	fetchFileSubmissionById,
+	fetchFileSubmissionsByUser,
 	fetchSubmissionById,
 	fetchSubmissionsFromUserCourses,
 } from "@lms-repo-edge-version/db/utils/query/submissions";
@@ -191,9 +198,14 @@ export const submissionsRoute = new Hono<{
 				return c.json(updateResult);
 			}
 
-			return c.json({ successCount: results.length, results }, 201);
-		},
-	)
+		// 保存したメタデータを返す（UUIDを含む）
+		const savedMetadata = await fetchFileSubmissionsByUser(userId);
+		const uploadedFiles = savedMetadata.filter((m) =>
+			metadataList.some((meta) => meta.objectName === m.objectName),
+		);
+
+		return c.json({ successCount: results.length, results, files: uploadedFiles }, 201);
+	})
 	// 課題の提出（テキスト形式）
 	.post(
 		"/text",
@@ -222,4 +234,86 @@ export const submissionsRoute = new Hono<{
 		const assignmentId = c.req.param("assignmentId");
 		const submission = await fetchSubmissionById(userId, assignmentId);
 		return c.json(submission, 200);
+	})
+	// ユーザーのファイル提出メタデータを取得
+	.get("/files", async (c) => {
+		const { userId } = c.get("session");
+		const files = await fetchFileSubmissionsByUser(userId);
+		return c.json(files, 200);
+	})
+	// ファイルダウンロード用の署名付きURLを取得
+	.post("/download_url", async (c) => {
+		const { objectName } = await c.req.json();
+
+		if (
+			!env.R2_ACCESS_KEY_ID ||
+			!env.R2_SECRET_ACCESS_KEY ||
+			!env.R2_ACCOUNT_ID
+		) {
+			return c.json({ error: "R2 credentials not configured" }, 500);
+		}
+
+		const s3Client = new S3Client({
+			region: "auto",
+			endpoint: `https://${env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+			credentials: {
+				accessKeyId: env.R2_ACCESS_KEY_ID,
+				secretAccessKey: env.R2_SECRET_ACCESS_KEY,
+			},
+		});
+
+		const command = new GetObjectCommand({
+			Bucket: "storage",
+			Key: objectName,
+		});
+
+		const signedUrl = await getSignedUrl(s3Client, command, {
+			expiresIn: 3600,
+		});
+
+		return c.json({ signedUrl });
+	})
+	// ファイルダウンロード（開発環境用）
+	.get("/download", async (c) => {
+		const objectName = c.req.query("objectName");
+		if (!objectName) {
+			return c.json({ error: "Missing objectName parameter" }, 400);
+		}
+
+		const object = await env.STORAGE_BUCKET.get(objectName);
+		if (!object) {
+			return c.json({ error: "File not found" }, 404);
+		}
+
+		const headers = new Headers();
+		object.writeHttpMetadata(headers);
+		headers.set("etag", object.httpEtag);
+
+		return new Response(object.body, { headers });
+	})
+	// ファイル削除
+	.delete("/:fileId", async (c) => {
+		const fileId = c.req.param("fileId");
+
+		// ファイルメタデータを取得
+		const file = await fetchFileSubmissionById(fileId);
+
+		if (!file) {
+			return c.json({ error: "File not found" }, 404);
+		}
+
+		// ストレージからファイルを削除
+		try {
+			await env.STORAGE_BUCKET.delete(file.objectName);
+		} catch (error) {
+			console.error("Failed to delete file from storage:", error);
+		}
+
+		// データベースからメタデータを削除
+		const result = await deleteFileSubmissionMetadata(fileId);
+
+		if (result.status === 200) {
+			return c.json({ message: result.message }, 200);
+		}
+		return c.json({ error: result.message }, 500);
 	});

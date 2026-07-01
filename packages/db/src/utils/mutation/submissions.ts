@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import { createDb } from "../../index";
 import {
 	fileSubmissionsMetadata,
@@ -58,5 +59,17 @@ export const updateSubmissionStatus = async (
 		return { message: "提出状況の更新に成功しました", status: 200 };
 	} catch {
 		return { message: "提出状況の更新に失敗しました", status: 500 };
+	}
+};
+
+// ファイルメタデータの削除
+export const deleteFileSubmissionMetadata = async (fileId: string) => {
+	try {
+		await createDb()
+			.delete(fileSubmissionsMetadata)
+			.where(eq(fileSubmissionsMetadata.id, fileId));
+		return { message: "ファイルメタデータの削除に成功しました", status: 200 };
+	} catch {
+		return { message: "ファイルメタデータの削除に失敗しました", status: 500 };
 	}
 };
