@@ -79,7 +79,7 @@ export const useSubmitMultipleFiles = () => {
 			});
 			const signedUrls = await signedUrlsRes.json();
 
-			// 2. Cloud Storageにファイルを並列アップロード
+			// 2. Cloud Storage（R2）にファイルを並列アップロード
 			const uploadPromises = signedUrls.map(
 				async ({ fileName, signedUrl, objectName }) => {
 					const file = files.find((f) => f.name === fileName);
